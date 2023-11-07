@@ -39,10 +39,10 @@ In this scenario, Josh, Dylan, and Joey are part of a lending group. The followi
 ## Other Cases/Examples
 
 ### Case Default: Loan Repayment Time Expires for Cyril's $1000 Loan
-- The smart contract automatically detects the default when the repayment time expires and balance is not high enough and kicks cyril from the group adding him to a banned list of IDs for rejoining. It first emptys Cyrils balance and disributes it to creditors proportunitaley.
+- The smart contract automatically detects the default when the repayment time expires and balance is not high enough and kicks Cyril from the group adding him to a banned list of IDs for rejoining. It first emptys Cyrils balance and disributes it to creditors proportionally.
 - **System**: `default(0xAddressOfCyril);`
 
-### Case Cancel: Cyril Cancels Loan Befroe Fulfilment
+### Case Cancel: Cyril Cancels Loan Before Fulfillment
 - Cyril Decides to Cancel his loan request before it is filled and funds are refunded to contributors
 - **Cyril**: `cancelLoan(loanID);`
 
