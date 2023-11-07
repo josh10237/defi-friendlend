@@ -1,5 +1,8 @@
 # defi-friendlend
 
+## Project Explanation/Motivations
+
+
 ## Flow of Normal Logic Example
 
 In this scenario, Josh, Dylan, and Joey are part of a lending group. The following steps demonstrate how a new member, Cyril, is invited, a loan is requested and funded, and the repayment and withdrawal processes occur.
