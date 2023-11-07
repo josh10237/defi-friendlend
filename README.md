@@ -1,7 +1,7 @@
 # defi-friendlend
 
 ## Project Explanation/Motivations
-
+While the blockchain is a great tool for finance, it is often difficult to access. One major reason for this accessibility issue is lack of funds from individual people. Friend Lend aims to help the blockchain become more accessible through a peer to peer borrowing platform, mimicking similar ideas of a ROSCA (Rotating Savings and Credit Association) in the current world. If a member of the group wishes to invest in an asset or put up collateral for a loan, they may need additional support from other group members. By pooling money together and creating a request system, members can use the money in the pool and fulfill their needs.
 
 ## Flow of Normal Logic Example
 
