@@ -51,7 +51,7 @@ In this scenario, Josh, Dylan, and Joey are part of a lending group. The followi
 
 ### Main Layout
 
-<img src="pics/dash.png" alt="Main Screen Design" width="600"/>
+<img src="misc/pics/dash.png" alt="Main Screen Design" width="600"/>
 
 The main screen consists of the following components:
 - **My Loan Info** (top left)
@@ -78,7 +78,7 @@ The main screen consists of the following components:
     - Have option to approve or reject
   - All members have username, FriendLend score®, & Date joined listed
 
-<img src="pics/myloans.png" alt="Loan Frames Design" width="600"/>
+<img src="misc/pics/myloans.png" alt="Loan Frames Design" width="600"/>
 
 
 **My Loan Info** (top left) has various states:
