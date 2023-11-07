@@ -120,34 +120,32 @@ Contains the details of a loan request by a borrower.
 #### User Post Functions
 These are the functions that users can call to perform transactions and alter the state of the contract. They include functions to handle deposits, loan requests, voting, and repayments.
 
-- `proposeInvite(address)`: Propose a new member to the group by submitting their Ethereum address.
-- `voteOnPendingPerson(address, bool)`: Vote on whether to admit a pending member into the group.
-- `join(string)`: A new member uses this function to join after being approved.
-- `depositFunds(uint256)`: Deposit funds into the lending pool.
-- `requestLoan(uint256, uint256, uint256, string)`: Request a new loan specifying the amount, interest rate, repayment date, and a description.
-- `fillLoanRequest(uint256, uint256)`: Contribute to a loan request.
-- `withdrawFunds(uint256)`: Withdraw funds from the lending pool.
-- `cancelLoan(uint256)`: Cancel an unfilled loan request and trigger refunds.
-- `payNowLoan(uint256)`: Pay off an outstanding loan early.
+- `proposeInvite(address newMemberAddress)`: Propose a new member to the group by submitting their Ethereum address.
+- `voteOnPendingPerson(address candidateAddress, bool vote)`: Vote on whether to admit a pending member into the group.
+- `join(string nickname)`: A new member uses this function to join after being approved.
+- `depositFunds(uint256 amount)`: Deposit funds into the lending pool.
+- `requestLoan(uint256 amount, uint256 interestRate, uint256 dueDate, string reason)`: Request a new loan specifying the amount, interest rate, repayment date, and a description.
+- `fillLoanRequest(uint256 loanId, uint256 contribution)`: Contribute to a loan request.
+- `withdrawFunds(uint256 amount)`: Withdraw funds from the lending pool.
+- `cancelLoan(uint256 loanId)`: Cancel an unfilled loan request and trigger refunds.
+- `payNowLoan(uint256 loanId)`: Pay off an outstanding loan early.
 
 #### User Get Functions
 These functions are called by users to retrieve information from the contract without making any transactions, typically to display data in the UI.
 
-- `getMemberDetails(address)`: Retrieve the details of a specific member, such as their username, FriendLend score, and balance.
-- `getLoanDetails(uint256)`: Get detailed information about a specific loan request.
+- `getAllMembers()`: Retrieve all non-pending members and return their username, FriendLend score, dateAdded, and balance.
+- `getAllOpenLoans()`: Get a list of all open loan requests that are yet to be fulfilled.
 - `getPendingMembers()`: List all members whose membership is still pending based on votes.
-- `getActiveLoans()`: Get a list of all active loan requests that are yet to be fulfilled.
 
 #### System Functions
 Functions that the system calls automatically to enforce the rules of the contract. These functions may be triggered by transactions or by time-based events.
 
-- `autoPayLoan(uint256)`: Automatically deduct repayment amounts from a borrower's balance once the loan is due.
-- `default(address)`: Handle a loan default, remove the borrower from the group, distribute their balance to creditors, and add the borrower to the banned list.
+- `autoPayLoan(uint256 loanId)`: Automatically deduct repayment amounts from a borrower's balance once the loan is due.
+- `default(address delinquentBorrowerAddress)`: Handle a loan default, remove the borrower from the group, distribute their balance to creditors, and add the borrower to the banned list.
 
 #### Other Helper Functions
 Utility functions that support the contract's operations and provide additional functionality. They might include functions for internal calculations, logging, or contract maintenance tasks.
 
-- `calculateInterest(uint256, uint256, uint256)`: Calculate the due interest on a loan based on the principal, rate, and time.
-- `updateFriendScore(address, uint256)`: Update the FriendLend score of a member based on their activity and loan repayment behavior.
-- `logActivity(string)`: Log a user's activity for auditing purposes.
-- `checkMembershipStatus(address)`: Check if a user's membership application has been approved or is still pending.
+- `calculateInterest(uint256 principal, uint256 rate, uint256 time)`: Calculate the daily interest as well as the total repayment amount on a loan based on the principal, rate, and time.
+- `updateFriendScore(address memberAddress, uint256 newScore)`: Update the FriendLend score of a member based on their activity and loan repayment behavior.
+- `checkMembershipStatus(address memberAddress)`: Check if a user's membership application has been approved or is still pending.
