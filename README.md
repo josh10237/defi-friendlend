@@ -78,7 +78,7 @@ The main screen consists of the following components:
     - Have option to approve or reject
   - All members have username, FriendLend score®, & Date joined listed
 
-<img src="pics/myloan.png" alt="Loan Frames Design" width="600"/>
+<img src="pics/myloans.png" alt="Loan Frames Design" width="600"/>
 
 
 **My Loan Info** (top left) has various states:
