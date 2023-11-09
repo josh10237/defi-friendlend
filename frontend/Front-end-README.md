@@ -6,7 +6,7 @@ This document provides the setup instructions and component details for the Frie
 
 Before you begin, ensure you have the following installed:
 - Node.js (version 14 or later)
-- npm (comes with Node.js)
+- npm (comes with Node.js) [joey using 9.2.0]
 - Git
 
 ## Installation and Setup
