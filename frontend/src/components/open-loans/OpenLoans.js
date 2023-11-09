@@ -32,8 +32,8 @@ function OpenLoans() {
     ]
     return (
         <Box
-            marginLeft={'10vw'}
-            marginRight={'10vw'}
+            marginLeft={'2vw'}
+            marginRight={'2vw'}
             borderRadius={'30px'}
             borderWidth={'1px'}
             boxShadow={'base'}

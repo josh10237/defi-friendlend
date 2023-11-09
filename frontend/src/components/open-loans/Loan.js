@@ -10,7 +10,7 @@ function Loan({loan}) {
 
     return (
         <Flex 
-            w={'25vw'} 
+            w={'300px'} 
             bg={'white'} 
             borderColor={'lightgrey'}
             borderWidth={'1px'}
