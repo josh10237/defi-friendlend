@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Center } from "@chakra-ui/react";
+import { Box, Center } from "@chakra-ui/react";
 
 function TopBar() {
     return (
