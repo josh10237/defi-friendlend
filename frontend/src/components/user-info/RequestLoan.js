@@ -5,10 +5,10 @@ function RequestLoan({ onRequestLoan }) {
     return (
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={6} m={6}>
             <Flex direction="column" align="start" justify="center">
-                <FormLabel fontSize="xl" fontWeight="bold" mb={4}>
+                <FormLabel fontSize="xl" fontWeight="bold" mb={8}>
                     Request Loan
                 </FormLabel>
-                <Stack direction="row" spacing={15} mb={6}>
+                <Stack direction="row" spacing={15} mb={20}>
                     <FormControl id="amount">
                         <FormLabel>Amount</FormLabel>
                         <Input placeholder="$0.00" />
@@ -22,7 +22,7 @@ function RequestLoan({ onRequestLoan }) {
                         <Input placeholder="Enter due date" type="date" />
                     </FormControl>
                 </Stack>
-                <Button colorScheme="blue" onClick={onRequestLoan}>
+                <Button colorScheme="blue" onClick={onRequestLoan} mb={4}>
                     Request
                 </Button>
             </Flex>
