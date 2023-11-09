@@ -77,6 +77,9 @@ contract FriendLend {
         // Logic to list all pending members
     }
 
+    function getLoanByMember(address memberAdress) public view returns (LoanRequest memory) {
+    }
+
     // System and helper functions are not fully implemented due to their complex nature
     // and requirement for further specifications.
 
