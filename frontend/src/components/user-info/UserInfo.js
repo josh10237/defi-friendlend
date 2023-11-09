@@ -49,7 +49,7 @@ function UserInfo({ memberAddress }) {
   }
 
   return (
-    <Flex direction="row" wrap="wrap">
+    <Flex direction="row" align="stretch" wrap="wrap">
       <Box flex="2" minW={{ base: "100%", md: "66%" }} p={3}>
         {renderLoanComponent()}
       </Box>
