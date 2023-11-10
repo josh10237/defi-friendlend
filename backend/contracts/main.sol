@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.5.16;
+pragma solidity ^0.6.0;
+pragma experimental ABIEncoderV2;
 
 contract FriendLend {
     struct Member {
@@ -23,6 +24,16 @@ contract FriendLend {
         bool isLent;
         bool isReturned;
         string reason;
+        bool exists;
+    }
+
+    struct Investment {
+        uint256 amount;
+        uint256 interest;
+        uint256 dueDate;
+        address borrower;
+        string username;
+        string reason;
     }
 
 
@@ -39,7 +50,7 @@ contract FriendLend {
     mapping(uint => mapping(address => uint)) public loanContributions;
     mapping(address => uint256) public bannedMembers;
 
-    constructor(string memory theGroupName, string memory myUsername, string memory myPassword) {
+    constructor(string memory theGroupName, string memory myUsername, string memory myPassword) public {
         owner = msg.sender;
         members[owner] = Member(owner, myUsername, myPassword, 0, 0, false, 0, true);
         memberCount += 1;
@@ -92,34 +103,32 @@ contract FriendLend {
         members[msg.sender].balance += msg.value;
     }
 
-    function requestLoan(uint256 amount, uint256 interestRate, uint256 dueDate, string memory reason) public {
+    function requestLoan(uint256 amount, uint256 interestRate, uint256 dueDate, string memory reason) public  onlyMembers() {
         // Logic to request a new loan
-        Loan memory loan = Loan(currLoanId, msg.sender, amount, interestRate, 0, dueDate, false, false, reason);
+        Loan memory loan = Loan(currLoanId, msg.sender, amount, interestRate, 0, dueDate, false, false, reason, true);
         loans.push(loan);
         currLoanId += 1;
     }
 
     function lendLoan(uint loanId) private {
-        
+        require(loans[loanId].id == loanId, 'test');
+        loans[loanId].isLent = true;
+        members[loans[loanId].borrower].balance += loans[loanId].amount;
     }
 
     function fillLoanRequest(uint loanId, uint256 contribution) public onlyMembers() {
-        // Logic to contribute to a loan request
-        for (uint i = 0; i < loans.length; i++) {
-            if (loans[i].id == loanId) {
-                
-                uint256 togo = loans[i].amount - loans[i].filled;
-                if (togo < contribution) {
-                    contribution = togo;
-                }
-                loans[i].filled += contribution;
-                require (members[msg.sender].balance >= contribution, "insufficient balance");
-                members[msg.sender].balance -= contribution;
-                loanContributions[loanId][msg.sender] += contribution;
-                if (loans[i].filled == loans[i].amount) {
-                    lendLoan(loanId);
-                }
-            }
+        // Logic to contribute to a loan request      
+        require (loans[loanId].exists, "loan does not exist or has been cancelled");          
+        uint256 togo = loans[loanId].amount - loans[loanId].filled;
+        if (togo < contribution) {
+            contribution = togo;
+        }
+        loans[loanId].filled += contribution;
+        require (members[msg.sender].balance >= contribution, "insufficient balance");
+        members[msg.sender].balance -= contribution;
+        loanContributions[loanId][msg.sender] += contribution;
+        if (loans[loanId].filled == loans[loanId].amount) {
+            lendLoan(loanId);
         }
 
     }
@@ -128,15 +137,37 @@ contract FriendLend {
         // Logic to withdraw funds from the lending pool
         require (members[msg.sender].balance >= amount, "insufficient balance");
         members[msg.sender].balance -= amount;
-        payable(msg.sender).transfer(amount);
+        payable(address(msg.sender)).transfer(amount);
     }
 
     function cancelLoan(uint256 loanId) public {
-        // Logic to cancel an unfilled loan request
+        require(loans[loanId].borrower == msg.sender, "only the lender can cancel");
+        require(loans[loanId].exists, "loan does not exist");
+        require(!loans[loanId].isLent, "loan already has been lent");
+        loans[loanId].exists = false;
+        for (uint i = 0; i < allMembers.length; i++) {
+            // repay all people who contributed
+            if (loanContributions[loanId][allMembers[i]] > 0) {
+                members[allMembers[i]].balance += loanContributions[loanId][allMembers[i]];
+            }
+        }
     }
 
-    function payNowLoan(uint256 loanId) public {
+    function payLoan(uint256 loanId) public onlyMembers() {
+        require (loans[loanId].exists, "loan does not exist or has been cancelled");          
+        require(loans[loanId].borrower == msg.sender, "only the lender can cancel");
+        require(loans[loanId].isLent, "loan already not been lent");
+        require(members[loans[loanId].borrower].balance > loans[loanId].amount, "you do not have enough balance to repay");
         // Logic to pay off an outstanding loan early
+        
+        members[loans[loanId].borrower].balance -= (1 + loans[loanId].interest) * loans[loanId].amount;
+        for (uint i = 0; i < allMembers.length; i++) {
+            // repay all people who contribute their contributions + interest
+            if (loanContributions[loanId][allMembers[i]] > 0) {
+                members[allMembers[i]].balance += (1 + loans[loanId].interest) * loanContributions[loanId][allMembers[i]];
+            }
+        }
+        loans[loanId].isReturned = true;
     }
 
     function canJoin() public view returns (bool cj) {
@@ -167,8 +198,22 @@ contract FriendLend {
         return nonPending;
     }
 
-    function getAllOpenLoans() public onlyMembers() view returns (Loan[] memory allLoans) {
+    function getAllOpenLoans() public onlyMembers() view returns (Loan[] memory) {
         // Logic to get all open loan requests
+        uint count = 0;
+        for (uint i = 0; i < loans.length; i++) {
+            if (!loans[i].isLent) {
+                count += 1;
+            }
+        }
+        uint j = 0;
+        Loan[] memory openLoans = new Loan[](count);
+        for (uint i = 0; i < loans.length; i++) {
+            if (!loans[i].isLent) {
+                openLoans[j] = loans[i];
+            }
+        }
+        return openLoans;
     }
 
     function getPendingMembers() public onlyMembers() view returns (Member[] memory) {
@@ -210,6 +255,10 @@ contract FriendLend {
             }
         }
         return pending;
+
+    }
+
+    function getPortfolio() public onlyMembers() view returns (Investment[] memory) {
 
     }
     // System and helper functions are not fully implemented due to their complex nature
