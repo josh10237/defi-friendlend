@@ -1,4 +1,4 @@
-import { Text, CircularProgress, CircularProgressLabel, Flex, Center, Button, Box, Input, InputLeftAddon, InputGroup } from "@chakra-ui/react";
+import { FormLabel,Text, CircularProgress, CircularProgressLabel, Flex, Center, Button, Box, Input, InputLeftAddon, InputGroup } from "@chakra-ui/react";
 import React from "react";
 
 function Loan({loan}) {
@@ -10,7 +10,7 @@ function Loan({loan}) {
 
     return (
         <Flex 
-            w={'300px'} 
+            w={'350px'}
             bg={'white'} 
             borderWidth={'1px'}
             borderRadius={'lg'}
@@ -18,7 +18,9 @@ function Loan({loan}) {
             margin={'5px'}
         >
             <Center>
-                <Text>Loan: {loan.borrower}</Text>
+                <FormLabel fontSize="xl" fontWeight="bold" ml={3} mt={3}>
+                    Loan: {loan.borrower}
+                </FormLabel>
             </Center>
             <Center>
                 <CircularProgress value={portionFilled} size={'100px'} ringColor={'blue'}>

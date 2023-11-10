@@ -38,8 +38,8 @@ function OpenLoans() {
             borderWidth={'1px'}
         >
             <FormLabel fontSize="xl" fontWeight="bold" ml={8}>
-                    Open Loans
-                </FormLabel>
+                Open Loans
+            </FormLabel>
             <Wrap justify={'center'}>
                 {openLoans.map((loan) => {
                     return (
