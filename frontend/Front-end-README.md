@@ -6,7 +6,7 @@ This document provides the setup instructions and component details for the Frie
 
 Before you begin, ensure you have the following installed:
 - Node.js (version 14 or later)
-- npm (comes with Node.js)
+- npm (comes with Node.js) [joey using 9.2.0]
 - Git
 
 ## Installation and Setup
@@ -46,11 +46,13 @@ Our front-end application relies on several key dependencies:
 - `react-dom`: Allows React to interact with the DOM.
 - `web3`: Essential for interacting with Ethereum blockchain from the web browser.
 - `@truffle/contract`: Assists in creating a JavaScript representation of our smart contracts which makes it easier to interact with.
+- `chakraui`: Library for preset frontend componenets
 
 To install these dependencies, you will need to run:
 
 ```bash
 npm install react react-dom web3 @truffle/contract
+npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion
 ```
 
 ## Components Structure
