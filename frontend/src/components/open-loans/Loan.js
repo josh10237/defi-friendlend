@@ -1,4 +1,16 @@
-import { FormLabel,Text, CircularProgress, CircularProgressLabel, Flex, Center, Button, Box, Input, InputLeftAddon, InputGroup } from "@chakra-ui/react";
+import { FormLabel,
+    Text, 
+    CircularProgress, 
+    CircularProgressLabel, 
+    Flex, 
+    Center, 
+    Button, 
+    Box, 
+    Input, 
+    InputLeftAddon, 
+    InputGroup 
+} from "@chakra-ui/react";
+
 import React from "react";
 
 function Loan({loan}) {
