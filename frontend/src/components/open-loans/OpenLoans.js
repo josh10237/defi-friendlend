@@ -1,4 +1,4 @@
-import { Box, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, FormLabel, Wrap, WrapItem } from "@chakra-ui/react";
 import React from "react";
 import Loan from "./Loan";
 
@@ -32,18 +32,14 @@ function OpenLoans() {
     ]
     return (
         <Box
-            marginLeft={'2vw'}
-            marginRight={'2vw'}
-            borderRadius={'30px'}
+            p={6}
+            m={6}
+            borderRadius={'lg'}
             borderWidth={'1px'}
-            boxShadow={'base'}
         >
-            <Box 
-                marginLeft={'25px'} 
-                fontSize={'x-large'}
-                as={"b"}
-                textColor={'darkgray'}
-                >Open Loans</Box>
+            <FormLabel fontSize="xl" fontWeight="bold" ml={8}>
+                    Open Loans
+                </FormLabel>
             <Wrap justify={'center'}>
                 {openLoans.map((loan) => {
                     return (

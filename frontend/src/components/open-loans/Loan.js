@@ -12,18 +12,16 @@ function Loan({loan}) {
         <Flex 
             w={'300px'} 
             bg={'white'} 
-            borderColor={'lightgrey'}
             borderWidth={'1px'}
-            borderRadius={'15px'}
+            borderRadius={'lg'}
             direction={'column'}
             margin={'5px'}
-            boxShadow={'base'}
         >
             <Center>
                 <Text>Loan: {loan.borrower}</Text>
             </Center>
             <Center>
-                <CircularProgress value={portionFilled} size={'100px'}>
+                <CircularProgress value={portionFilled} size={'100px'} ringColor={'blue'}>
                     <CircularProgressLabel>
                         {portionFilled}%
                         </CircularProgressLabel>
@@ -96,13 +94,13 @@ function Loan({loan}) {
 
             <Center>
                 <InputGroup
-                    margin={'5px'}
+                    margin={'10px'}
                     w={'15vw'}
                 >
                     <InputLeftAddon>$</InputLeftAddon>
                     <Input placeholder="Enter Amount"></Input>
                 </InputGroup>
-                <Button margin={'5px'} bg={'lightgreen'}>
+                <Button mr={'10px'} colorScheme={'green'}>
                     Contribute
                 </Button>
             </Center>
