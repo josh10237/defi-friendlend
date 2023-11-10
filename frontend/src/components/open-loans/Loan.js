@@ -18,7 +18,7 @@ function Loan({loan}) {
             margin={'5px'}
         >
             <Center>
-                <FormLabel fontSize="xl" fontWeight="bold" ml={3}>
+                <FormLabel fontSize="xl" fontWeight="bold" ml={3} mt={3}>
                     Loan: {loan.borrower}
                 </FormLabel>
             </Center>
