@@ -5,6 +5,7 @@ contract FriendLend {
     struct Member {
         address memberAddress;
         string username;
+        string myPassword;
         uint256 friendScore;
         uint256 balance;
         bool isPending;
@@ -12,31 +13,38 @@ contract FriendLend {
         bool exists;
     }
 
-    struct LoanRequest {
+    struct Loan {
+        uint id;
         address borrower;
         uint256 amount;
+        uint256 interest;
         uint256 filled;
         uint256 dueDate;
-        bool isFulfilled;
-        mapping(address => uint256) contributions;
+        bool isLent;
+        bool isReturned;
+        string reason;
     }
 
 
     address public owner; //address of group creator
     mapping(address => Member) public members; //mapping to member structs
     address[] public allMembers; //array of all member addresses
-
+    string public groupName;
     mapping(address => mapping(address => int)) public votes; //mapping of candidate addresses to a mapping of the people and their votes for the candidate
     uint public memberCount = 0; //number of confirmed members
 
-    LoanRequest[] public loanRequests;
+
+    uint currLoanId = 0; 
+    Loan[] public loans; //list of all lones
+    mapping(uint => mapping(address => uint)) public loanContributions;
     mapping(address => uint256) public bannedMembers;
 
-    constructor(string memory myUsername) {
+    constructor(string memory theGroupName, string memory myUsername, string memory myPassword) {
         owner = msg.sender;
-        members[owner] = Member(owner, myUsername, 0, 0, false, 0, true);
+        members[owner] = Member(owner, myUsername, myPassword, 0, 0, false, 0, true);
         memberCount += 1;
         allMembers.push(msg.sender);
+        groupName = theGroupName;
     }
 
     modifier onlyOwner() {
@@ -52,7 +60,7 @@ contract FriendLend {
     function proposeInvite(address newMemberAddress) public onlyMembers(){
         // Logic to propose a new member
         require(!members[newMemberAddress].exists, "member already exists");
-        members[newMemberAddress] = Member(newMemberAddress, "", 0, 0, true, 0, true);
+        members[newMemberAddress] = Member(newMemberAddress, "", "", 0, 0, true, 0, true);
         allMembers.push(newMemberAddress);
     }
 
@@ -79,17 +87,41 @@ contract FriendLend {
         memberCount += 1;
     }
 
-    function depositFunds(uint256 amount) public onlyMembers() payable {
+    function depositFunds() public onlyMembers() payable {
         // Logic to deposit funds into the lending pool
         members[msg.sender].balance += msg.value;
     }
 
     function requestLoan(uint256 amount, uint256 interestRate, uint256 dueDate, string memory reason) public {
         // Logic to request a new loan
+        Loan memory loan = Loan(currLoanId, msg.sender, amount, interestRate, 0, dueDate, false, false, reason);
+        loans.push(loan);
+        currLoanId += 1;
     }
 
-    function fillLoanRequest(uint256 loanId, uint256 contribution) public {
+    function lendLoan(uint loanId) private {
+        
+    }
+
+    function fillLoanRequest(uint loanId, uint256 contribution) public onlyMembers() {
         // Logic to contribute to a loan request
+        for (uint i = 0; i < loans.length; i++) {
+            if (loans[i].id == loanId) {
+                
+                uint256 togo = loans[i].amount - loans[i].filled;
+                if (togo < contribution) {
+                    contribution = togo;
+                }
+                loans[i].filled += contribution;
+                require (members[msg.sender].balance >= contribution, "insufficient balance");
+                members[msg.sender].balance -= contribution;
+                loanContributions[loanId][msg.sender] += contribution;
+                if (loans[i].filled == loans[i].amount) {
+                    lendLoan(loanId);
+                }
+            }
+        }
+
     }
 
     function withdrawFunds(uint256 amount) public onlyMembers() {
@@ -122,7 +154,7 @@ contract FriendLend {
         }
     }
 
-    function getAllMembers() public view returns (Member[] memory) {
+    function getAllConfirmedMembers() public onlyMembers() view returns (Member[] memory) {
         // Logic to retrieve all non-pending members
         Member[] memory nonPending = new Member[](memberCount);
         uint j = 0;
@@ -135,14 +167,32 @@ contract FriendLend {
         return nonPending;
     }
 
-    function getAllOpenLoans() public view returns (int k) {
+    function getAllOpenLoans() public onlyMembers() view returns (Loan[] memory allLoans) {
         // Logic to get all open loan requests
     }
 
+    function getPendingMembers() public onlyMembers() view returns (Member[] memory) {
+        //returns all pending members the user has voted on
+        uint count = 0;
+        for (uint i = 0; i < allMembers.length; i++) {
+            if (members[allMembers[i]].isPending && votes[allMembers[i]][msg.sender] != 0) {
+                count ++;
+            }
+        }
+
+        Member[] memory pending = new Member[](count);
+        uint j = 0;
+        for (uint i = 0; i < allMembers.length; i++) {
+            if (members[allMembers[i]].isPending && votes[allMembers[i]][msg.sender] != 0) {
+                pending[j] = members[allMembers[i]];
+                j ++;
+            }
+        }
+        return pending;
+    }
 
     function getMembersToVoteOn() public onlyMembers() view returns (Member[] memory) {
-        // Logic to list all pending member
-        //member
+        // Logic to list all pending members the sender has not voted on
         uint count = 0;
         for (uint i = 0; i < allMembers.length; i++) {
             if (members[allMembers[i]].isPending && votes[allMembers[i]][msg.sender] == 0) {
