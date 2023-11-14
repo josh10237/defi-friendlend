@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MemberItem from "./MemberItem";
 import {
   Box,
@@ -13,9 +13,29 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-function MemberList() {
+function MemberList ({contract}) {
   const [memberAddress, setMemberAddress] = useState("");
   const borderColor = useColorModeValue("gray.200", "gray.600");
+  const [members, setMembers] = useState([])
+  
+  const getMemberList = async () => {
+    try {
+      const result = await contract.methods.getAllConfirmedMembers().call()
+      console.log("Result from contract:", result);
+      return result;
+    } catch (e) {
+      console.error("Error fetching data from contract:", e);
+    }
+    
+  }
+
+  useEffect(() => {
+    getMemberList().then((result) => {
+      setMembers(result)
+    })
+    // eslint-disable-next-line
+  }, [])
+
 
   const handleRequestClick = () => {
     // Implement what should happen when the request is clicked
@@ -51,6 +71,17 @@ function MemberList() {
         </Grid>
         {/* Member List */}
         {/* Map over your member data here to render MemberItem components */}
+        {members.map((m) => {
+          return (
+            <MemberItem 
+              username={m.username}
+              friendLendScore={m.memberAddress}
+              dateJoined={m.myPassword}
+              balance={m.balance}
+              pending={m.isPending}
+            />
+          )
+        })}
         <MemberItem
             username="0x03592358689"
             friendLendScore="0"
