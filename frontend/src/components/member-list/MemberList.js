@@ -14,17 +14,22 @@ import {
 } from "@chakra-ui/react";
 
 function MemberList ({contract}) {
-  const [memberAddress, setMemberAddress] = useState("");
+  // control state for member proposed by user
+  const [proposedMemberAddress, setProposedMemberAddress] = useState("");
   const borderColor = useColorModeValue("gray.200", "gray.600");
+  // store member list
   const [members, setMembers] = useState([])
+  // loading indicator for member add requests
+  const [requestLoading, setRequestLoading] = useState(false)
   
+  // function to retrieve list of members upon page load
   const getMemberList = async () => {
     try {
       const result = await contract.methods.getAllConfirmedMembers().call()
-      console.log("Result from contract:", result);
+      console.log("Result from getting all confirmed members:", result);
       return result;
     } catch (e) {
-      console.error("Error fetching data from contract:", e);
+      console.error("Error fetching member data from contract:", e);
     }
     
   }
@@ -36,12 +41,20 @@ function MemberList ({contract}) {
     // eslint-disable-next-line
   }, [])
 
-
-  const handleRequestClick = () => {
-    // Implement what should happen when the request is clicked
-    console.log("Request for address:", memberAddress);
+  // on click handler for member proposal
+  const handleRequestClick = async () => {
+    setRequestLoading(true);
+    console.log("Request for address:", proposedMemberAddress);
+    try {
+      const result = await contract.methods.proposeInvite(proposedMemberAddress).call()
+      console.log("Result of proposing invite:", result)
+    } catch (e) {
+      setRequestLoading(false)
+      console.error("Error while proposing invite:", e)
+    }
+    setRequestLoading(false);
     // Reset the input field after request
-    setMemberAddress("");
+    setProposedMemberAddress("");
   };
 
   return (
@@ -54,11 +67,11 @@ function MemberList ({contract}) {
             <Heading size="md" whiteSpace="nowrap" mr={4}>Add Member</Heading>
             <Input
               placeholder="0x0000000000"
-              value={memberAddress}
-              onChange={(e) => setMemberAddress(e.target.value)}
+              value={proposedMemberAddress}
+              onChange={(e) => setProposedMemberAddress(e.target.value)}
               flexGrow={1}
             />
-            <Button colorScheme="blue" onClick={handleRequestClick}>Request</Button>
+            <Button colorScheme="blue" onClick={handleRequestClick} disabled={requestLoading}>Request</Button>
           </HStack>
         </Flex>
         {/* Column Headers */}
@@ -74,6 +87,7 @@ function MemberList ({contract}) {
         {members.map((m) => {
           return (
             <MemberItem 
+              key={m.username}
               username={m.username}
               friendLendScore={m.memberAddress}
               dateJoined={m.myPassword}
@@ -82,6 +96,7 @@ function MemberList ({contract}) {
             />
           )
         })}
+        {/* Filler Member Data, temporary! */}
         <MemberItem
             username="0x03592358689"
             friendLendScore="0"

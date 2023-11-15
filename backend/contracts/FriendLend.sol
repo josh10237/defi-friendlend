@@ -136,6 +136,9 @@ contract FriendLend {
         members[msg.sender].balance += msg.value;
     }
 
+    // FE: would be very helpful if this returned the loan struct at the end of the function
+    // FE: can we do date objects? or is the int the only option
+    // FE: either this function or the getAllOpenLoans function is not working
     function requestLoan(
         uint256 amount,
         uint256 interestRate,
