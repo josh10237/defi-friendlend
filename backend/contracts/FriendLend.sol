@@ -144,7 +144,7 @@ contract FriendLend {
         uint256 interestRate,
         uint256 dueDate,
         string memory reason
-    ) public onlyMembers {
+    ) public onlyMembers returns (Loan memory) {
         // Logic to request a new loan
         Loan memory loan = Loan(
             currLoanId,
@@ -160,6 +160,7 @@ contract FriendLend {
         );
         loans.push(loan);
         currLoanId += 1;
+        return loan;
     }
 
     function lendLoan(uint loanId) private {

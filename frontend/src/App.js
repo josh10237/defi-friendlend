@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 // access wallet inside of dapp
 const web3 = new Web3(new Web3.providers.HttpProvider("https://sepolia.infura.io/v3/782dad6b6b984171a70dec97668ad773"))
 // contract address of deployed contract
-const contractAdress = "0x0Ce878c30DD201D50Db6588F55e93995aAE814E9"
+const contractAdress = "0xF86e5CE91aAAbE8f29162f8b4Ed84CA9573e49b1"
 const friendLendContract = new web3.eth.Contract(FriendLend, contractAdress)
 
 function App() {
