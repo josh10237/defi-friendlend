@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MemberItem from "./MemberItem";
 import {
   Box,
@@ -13,15 +13,48 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-function MemberList() {
-  const [memberAddress, setMemberAddress] = useState("");
+function MemberList ({contract}) {
+  // control state for member proposed by user
+  const [proposedMemberAddress, setProposedMemberAddress] = useState("");
   const borderColor = useColorModeValue("gray.200", "gray.600");
+  // store member list
+  const [members, setMembers] = useState([])
+  // loading indicator for member add requests
+  const [requestLoading, setRequestLoading] = useState(false)
+  
+  // function to retrieve list of members upon page load
+  const getMemberList = async () => {
+    try {
+      const result = await contract.methods.getAllConfirmedMembers().call()
+      console.log("Result from getting all confirmed members:", result);
+      return result;
+    } catch (e) {
+      console.error("Error fetching member data from contract:", e);
+    }
+    
+  }
 
-  const handleRequestClick = () => {
-    // Implement what should happen when the request is clicked
-    console.log("Request for address:", memberAddress);
+  useEffect(() => {
+    getMemberList().then((result) => {
+      setMembers(result)
+    })
+    // eslint-disable-next-line
+  }, [])
+
+  // on click handler for member proposal
+  const handleRequestClick = async () => {
+    setRequestLoading(true);
+    console.log("Request for address:", proposedMemberAddress);
+    try {
+      const result = await contract.methods.proposeInvite(proposedMemberAddress).call()
+      console.log("Result of proposing invite:", result)
+    } catch (e) {
+      setRequestLoading(false)
+      console.error("Error while proposing invite:", e)
+    }
+    setRequestLoading(false);
     // Reset the input field after request
-    setMemberAddress("");
+    setProposedMemberAddress("");
   };
 
   return (
@@ -34,11 +67,11 @@ function MemberList() {
             <Heading size="md" whiteSpace="nowrap" mr={4}>Add Member</Heading>
             <Input
               placeholder="0x0000000000"
-              value={memberAddress}
-              onChange={(e) => setMemberAddress(e.target.value)}
+              value={proposedMemberAddress}
+              onChange={(e) => setProposedMemberAddress(e.target.value)}
               flexGrow={1}
             />
-            <Button colorScheme="blue" onClick={handleRequestClick}>Request</Button>
+            <Button colorScheme="blue" onClick={handleRequestClick} disabled={requestLoading}>Request</Button>
           </HStack>
         </Flex>
         {/* Column Headers */}
@@ -51,6 +84,19 @@ function MemberList() {
         </Grid>
         {/* Member List */}
         {/* Map over your member data here to render MemberItem components */}
+        {members.map((m) => {
+          return (
+            <MemberItem 
+              key={m.username}
+              username={m.username}
+              friendLendScore={m.memberAddress}
+              dateJoined={m.myPassword}
+              balance={m.balance}
+              pending={m.isPending}
+            />
+          )
+        })}
+        {/* Filler Member Data, temporary! */}
         <MemberItem
             username="0x03592358689"
             friendLendScore="0"
