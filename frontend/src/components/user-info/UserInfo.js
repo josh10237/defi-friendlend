@@ -4,23 +4,18 @@ import RequestLoan from "./RequestLoan";
 import PendingLoan from "./PendingLoan";
 import ActiveLoan from "./ActiveLoan";
 import Balance from "./Balance";
+import { useDispatch, useSelector } from "react-redux";
+import { addLoan, setLoans } from "../../state/actions";
 
-function UserInfo({ memberAddress, contract }) {
+function UserInfo({ contract }) {
   // state variables
-  const [loanData, setLoanData] = useState(null);
+  const dispatch = useDispatch();
+  const loanData = useSelector((state) => state.loan.loans);
+  const currentUser = useSelector((state) => state.member.currentUser)
   const [loading, setLoading] = useState(true);
-  const [balance, setBalance] = useState(null); // You would fetch this from your smart contract
+  // const [balance, setBalance] = useState(null); // You would fetch this from your smart contract
 
-  // function to fetch loan data, called in useEffect
-  async function fetchLoanData() {
-    try {
-      const result = await contract.methods.getAllOpenLoans().call();
-      console.log("Result after fetching loan data:", result)
-      setLoanData(result)
-    } catch (error) {
-      console.error("Error fetching loan data:", error);
-    }
-  }
+  
 
   // TODO: fetch user balance function
   async function fetchUserBalance() {
@@ -29,9 +24,19 @@ function UserInfo({ memberAddress, contract }) {
 
   // fetch data for component
   useEffect(() => {
+    // function to fetch loan data from backend on load
+    async function fetchLoanData() {
+      try {
+        const result = await contract.methods.getAllOpenLoans().call();
+        dispatch(setLoans(result));
+        console.log("Result after fetching loan data:", loanData);
+      } catch (error) {
+        console.error("Error fetching loan data:", error);
+      }
+    }
     setLoading(true);
     fetchLoanData();
-    fetchUserBalance()
+    fetchUserBalance();
     setLoading(false);
     // eslint-disable-next-line
   }, []);
@@ -45,21 +50,21 @@ function UserInfo({ memberAddress, contract }) {
     console.log(description)
     try {
       contract.methods.requestLoan(amount, interest, new Date(dueDate).getTime(), description).call().then((l) => {
-        console.log("loan request complete:", l)
+        dispatch(addLoan(l));
+        console.log("loan request complete:", loanData);
       })
     } catch (e) {
-      console.error("Error requesting loan:", e)
+      console.error("Error requesting loan:", e);
     }
-    fetchLoanData()
   }
 
-
+  console.log("Open Loans Redux Data: ", loanData)
 
   // defines which loan component should be displayed based on fetched data
   function renderLoanComponent() {
     if (loading) {
       return <Spinner />;
-    }
+    };
     if (loanData) {
       if (loanData.isPending && !loanData.isFulfilled) {
         return <PendingLoan />;
@@ -72,10 +77,10 @@ function UserInfo({ memberAddress, contract }) {
             // Define the onPayNow handler
           />
         );
-      }
-    }
+      };
+    };
     return <RequestLoan onRequestLoan={onRequestLoan} />;
-  }
+  };
 
   return (
     <Flex direction="row" align="stretch" wrap="wrap">
@@ -83,7 +88,7 @@ function UserInfo({ memberAddress, contract }) {
         {renderLoanComponent()}
       </Box>
       <Box flex="1" minW={{ base: "100%", md: "33%" }} p={3}>
-        <Balance balance={balance} />
+        <Balance /* balance={balance} */ />
       </Box>
     </Flex>
   );

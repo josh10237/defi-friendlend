@@ -4,9 +4,14 @@ import UserInfo from './components/user-info/UserInfo';
 import OpenLoans from './components/open-loans/OpenLoans';
 import MemberList from './components/member-list/MemberList';
 
+// WEB3 LIBRARIES
 import Web3 from 'web3';
 import { FriendLend } from './abi/abi';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+
+// REDUX STATE ACTION TYPES
+import { setCurrentUser } from './state/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 // access wallet inside of dapp
 const web3 = new Web3(new Web3.providers.HttpProvider("https://sepolia.infura.io/v3/782dad6b6b984171a70dec97668ad773"))
@@ -14,45 +19,21 @@ const web3 = new Web3(new Web3.providers.HttpProvider("https://sepolia.infura.io
 const contractAdress = "0xF86e5CE91aAAbE8f29162f8b4Ed84CA9573e49b1"
 const friendLendContract = new web3.eth.Contract(FriendLend, contractAdress)
 
-function App() {
-  const [loading, setLoading] = useState(true)
 
-  /*
-  This section is used strictly for testing purposes.
-  It console logs data retrieval to ensure proper functioning in the backend. 
-  */
+
+function App() {
+
+  const currentUser = useSelector(state => state.member.currentUser)
+  const members = useSelector(state => state.member.members)
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    async function checkBackendRetrievals() {
-      console.log("Testing Backend Retrievals in App.js")
-      // retrieve and log member list
-      try {
-        const members = await friendLendContract.methods.getAllConfirmedMembers().call()
-        console.log("Members Retrieved in Testing:", members)
-      } catch (e) {
-        console.error("Error retrieving Member List:", e)
-      }
-      // retrieve and log open loan list
-      try {
-        const loans = await friendLendContract.methods.getAllOpenLoans().call()
-        console.log("Loans Retrieved in Testing:", loans)
-      } catch (e) {
-        console.error("Error retrieving Loan List:", e)
-      }
-    }
-    setLoading(true)
-    checkBackendRetrievals()
-    setLoading(false)
+    // setting current user to first member in list; need better solution
+    dispatch(setCurrentUser(members[0]))
     // eslint-disable-next-line
   }, [])
+  console.log("current user:", currentUser)
 
-  // if testing, return a filler screen
-  if (loading) {
-    return (
-      <div>
-        <h1>TESTING BACKEND RETRIEVAL FUNCTIONS</h1>
-      </div>
-    )
-  } else {
     return (
       <div>
         <TopBar contract={friendLendContract} />
@@ -61,7 +42,6 @@ function App() {
         <MemberList contract={friendLendContract} />
       </div>
     );
-  }
 }
 
 export default App;

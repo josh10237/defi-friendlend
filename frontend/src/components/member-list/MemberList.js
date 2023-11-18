@@ -12,32 +12,34 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { setMembers } from "../../state/actions";
 
 function MemberList ({contract}) {
   // control state for member proposed by user
   const [proposedMemberAddress, setProposedMemberAddress] = useState("");
   const borderColor = useColorModeValue("gray.200", "gray.600");
-  // store member list
-  const [members, setMembers] = useState([])
+  // member list state
+  const members = useSelector((state) => state.member.members)
+  const dispatch = useDispatch()
   // loading indicator for member add requests
   const [requestLoading, setRequestLoading] = useState(false)
   
   // function to retrieve list of members upon page load
   const getMemberList = async () => {
+    // retrieve and log member list
     try {
-      const result = await contract.methods.getAllConfirmedMembers().call()
-      console.log("Result from getting all confirmed members:", result);
-      return result;
+      const members = await contract.methods.getAllConfirmedMembers().call()
+      dispatch(setMembers(members))
+      console.log("Members Retrieved:", members)
     } catch (e) {
-      console.error("Error fetching member data from contract:", e);
+      console.error("Error retrieving Member List:", e)
     }
     
   }
 
   useEffect(() => {
-    getMemberList().then((result) => {
-      setMembers(result)
-    })
+    getMemberList()
     // eslint-disable-next-line
   }, [])
 

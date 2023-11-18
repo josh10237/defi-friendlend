@@ -44,7 +44,7 @@ function OpenLoans() {
                 {openLoans.map((loan) => {
                     return (
                         <WrapItem>
-                            <Loan loan={loan} />
+                            <Loan key={loan.borrower} loan={loan} />
                         </WrapItem>
                     )
                 })

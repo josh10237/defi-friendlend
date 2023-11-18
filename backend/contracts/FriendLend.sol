@@ -12,6 +12,8 @@ contract FriendLend {
         bool isPending;
         uint256 dateAdded;
         bool exists;
+        uint loanid;
+        string loanStatus; // "NONE", "PENDING", "ACTIVE"
     }
 
     struct Loan {
@@ -62,7 +64,9 @@ contract FriendLend {
             0,
             false,
             0,
-            true
+            true,
+            0,
+            "NONE"
         );
         memberCount += 1;
         allMembers.push(msg.sender);
@@ -93,7 +97,9 @@ contract FriendLend {
             0,
             true,
             0,
-            true
+            true,
+            0,
+            "NONE"
         );
         allMembers.push(newMemberAddress);
     }
@@ -159,7 +165,11 @@ contract FriendLend {
             true
         );
         loans.push(loan);
+        // update user loan status
+        members[msg.sender].loanid = currLoanId;
+        members[msg.sender].loanStatus = "PENDING";
         currLoanId += 1;
+        
         return loan;
     }
 
@@ -167,6 +177,8 @@ contract FriendLend {
         require(loans[loanId].id == loanId, "test");
         loans[loanId].isLent = true;
         members[loans[loanId].borrower].balance += loans[loanId].amount;
+        // update member loan status
+        members[loans[loanId].borrower].loanStatus = "ACTIVE";
     }
 
     function fillLoanRequest(
@@ -217,6 +229,9 @@ contract FriendLend {
                 ];
             }
         }
+        // update member loan status
+        members[msg.sender].loanid = 0;
+        members[msg.sender].loanStatus = "NONE";
     }
 
     function payLoan(uint256 loanId) public onlyMembers {

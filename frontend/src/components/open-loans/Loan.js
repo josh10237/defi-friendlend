@@ -5,7 +5,6 @@ import { FormLabel,
     Flex, 
     Center, 
     Button, 
-    Box, 
     Input, 
     InputLeftAddon, 
     InputGroup 
