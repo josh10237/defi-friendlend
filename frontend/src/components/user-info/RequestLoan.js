@@ -2,15 +2,10 @@ import { Box, Flex, Button, Input, FormControl, FormLabel, Stack } from "@chakra
 import React, { useState } from "react";
 
 function RequestLoan({ onRequestLoan }) {
-    // the onRequestLoan parameter is a function that is called in the parent component variable upon a loan request
-
-    // form state control
-    const [amount, setAmount] = useState("")
-    const [interest, setInterest] = useState("")
-    const [dueDate, setDueDate] = useState("")
-    // const dueDate = 121212
-    // const [description, setDescription] = useState("")
-    const description = "yea this is a pretty cool loan if you ask me give me money!"
+    const [amount, setAmount] = useState("");
+    const [interest, setInterest] = useState("");
+    const [dueDate, setDueDate] = useState("");
+    const [description, setDescription] = useState(""); // State to handle the description
 
     return (
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={6} m={6}>
@@ -18,7 +13,7 @@ function RequestLoan({ onRequestLoan }) {
                 <FormLabel fontSize="xl" fontWeight="bold" mb={8}>
                     Request Loan
                 </FormLabel>
-                <Stack direction="row" spacing={15} mb={20}>
+                <Stack direction="row" spacing={15} mb={4}>
                     <FormControl id="amount">
                         <FormLabel>Amount</FormLabel>
                         <Input placeholder="$0.00" onChange={(e) => setAmount(e.target.value)} />
@@ -29,10 +24,14 @@ function RequestLoan({ onRequestLoan }) {
                     </FormControl>
                     <FormControl id="dueDate">
                         <FormLabel>Due Date</FormLabel>
-                        <Input placeholder="Enter due date" type="date"  onChange={(e) => {setDueDate(e.target.value)}} />
+                        <Input placeholder="Enter due date" type="date" onChange={(e) => setDueDate(e.target.value)} />
                     </FormControl>
                 </Stack>
-                <Button colorScheme="blue" onClick={() => onRequestLoan(amount, interest, dueDate, description)} mb={4}>
+                <FormControl id="description" mb={4}>
+                    <FormLabel>Reason</FormLabel>
+                    <Input placeholder="Describe the reason for the loan" onChange={(e) => setDescription(e.target.value)} />
+                </FormControl>
+                <Button colorScheme="blue" onClick={() => onRequestLoan(amount, interest, dueDate, description)}>
                     Request
                 </Button>
             </Flex>

@@ -13,7 +13,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMembers } from "../../state/actions";
+import { setCurrentUser, setMembers } from "../../state/actions";
 
 function MemberList ({contract}) {
   // control state for member proposed by user
@@ -24,6 +24,9 @@ function MemberList ({contract}) {
   const dispatch = useDispatch()
   // loading indicator for member add requests
   const [requestLoading, setRequestLoading] = useState(false)
+
+  //who u voted on
+  const [votedMembers, setVotedMembers] = useState({}); 
   
   // function to retrieve list of members upon page load
   const getMemberList = async () => {
@@ -31,6 +34,7 @@ function MemberList ({contract}) {
     try {
       const members = await contract.methods.getAllConfirmedMembers().call()
       dispatch(setMembers(members))
+      dispatch(setCurrentUser(members[0]))
       console.log("Members Retrieved:", members)
     } catch (e) {
       console.error("Error retrieving Member List:", e)
@@ -57,6 +61,19 @@ function MemberList ({contract}) {
     setRequestLoading(false);
     // Reset the input field after request
     setProposedMemberAddress("");
+  };
+
+  const handleVote = async (username, vote) => {
+      // Logic to handle approve action
+      console.log("handleVote called on user", username);
+      setVotedMembers(prevState => ({ ...prevState, [username]: true }));
+      try {
+        const result = await contract.methods.voteOnPendingPerson(username, vote).call()
+        console.log("Vote sent for", username, ":", vote, "Response:", result);
+      } catch (e) {
+        setRequestLoading(false)
+        console.error("Error sending vote for", username, ":", e);
+      }
   };
 
   return (
@@ -94,7 +111,9 @@ function MemberList ({contract}) {
               friendLendScore={m.memberAddress}
               dateJoined={m.myPassword}
               balance={m.balance}
-              pending={m.isPending}
+              pending={true}
+              onVote={(vote) => handleVote(m.username, vote)} // Passing handleVote as a prop
+              voted={votedMembers[m.username]}
             />
           )
         })}
@@ -105,13 +124,17 @@ function MemberList ({contract}) {
             dateJoined="July 15, 2023"
             balance="0"
             pending={true}
+            onVote={(vote) => handleVote("m.username", vote)} // Passing handleVote as a prop
+            voted={votedMembers["m.username"]}
         />
         <MemberItem
             username="Josh Benson"
             friendLendScore="173"
             dateJoined="July 12, 2023"
             balance="7,500"
-            pending={false}
+            pending={true}
+            onVote={(vote) => handleVote("m.username1", vote)} // Passing handleVote as a prop
+            voted={votedMembers["m.username1"]}
         />
         <MemberItem
             username="Joey Laderer"

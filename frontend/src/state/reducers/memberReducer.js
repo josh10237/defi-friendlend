@@ -2,10 +2,11 @@ import { fixBigIntTypes } from "../utils"
 
 const initialState = {
     members: [],
-    currentUser: ""
+    currentUser: {}
 }
 
 const memberReducer = (state = initialState, action) => {
+    console.log("reducerme")
     switch(action.type) {
         case "SET_MEMBERS":
             const members = action.payload
@@ -16,6 +17,8 @@ const memberReducer = (state = initialState, action) => {
             return {...state, members: members}
         case "SET_CURRENT_USER":
             return {...state, currentUser: action.payload}
+        case "UPDATE_USER_BALANCE":
+            return {...state, currentUser: {...state, balance: action.payload}}
         default:
             return state
     }
