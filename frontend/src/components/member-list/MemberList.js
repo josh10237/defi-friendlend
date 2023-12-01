@@ -13,7 +13,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMembers } from "../../state/actions";
+import { setCurrentUser, setMembers } from "../../state/actions";
 
 function MemberList ({contract}) {
   // control state for member proposed by user
@@ -34,6 +34,7 @@ function MemberList ({contract}) {
     try {
       const members = await contract.methods.getAllConfirmedMembers().call()
       dispatch(setMembers(members))
+      dispatch(setCurrentUser(members[0]))
       console.log("Members Retrieved:", members)
     } catch (e) {
       console.error("Error retrieving Member List:", e)

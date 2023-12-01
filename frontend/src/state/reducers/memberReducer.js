@@ -18,16 +18,9 @@ const memberReducer = (state = initialState, action) => {
         case "SET_CURRENT_USER":
             return {...state, currentUser: action.payload}
         case "UPDATE_USER_BALANCE":
-            console.log("here456")
-            const currUser = action.payload.user;
-            console.log("STARTING BALANCE: " + currUser.balance)
-            const bal = action.payload.balance;
-            currUser.balance = bal
-            console.log("ENDING BALANCE: " + currUser.balance)
-            return {...state, currentUser: currUser}
+            return {...state, currentUser: {...state, balance: action.payload}}
         default:
             return state
-
     }
 }
 

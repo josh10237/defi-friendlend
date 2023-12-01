@@ -32,10 +32,10 @@ export const setCurrentUser = (user) => {
 
 
 // get current user
-export const updateUserBalance = (user, balance) => {
+export const updateUserBalance = (balance) => {
     console.log("here123")
     return {
         type: "UPDATE_USER_BALANCE",
-        payload: {user: user, balance: balance}
+        payload: balance
     }
 }

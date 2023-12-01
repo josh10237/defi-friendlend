@@ -2,7 +2,6 @@ import React from "react";
 import { Grid, Text, Button, Box } from "@chakra-ui/react";
 
 function MemberItem({ username, friendLendScore, dateJoined, balance, pending, onVote, voted }) {
-    console.log(onVote);
     return (
         <Grid templateColumns="repeat(5, 1fr)" gap={4} alignItems="center" p={4} borderWidth="1px" borderRadius="lg" mb={2}>
             <Text fontWeight="bold">{username}</Text>

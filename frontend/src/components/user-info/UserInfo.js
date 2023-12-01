@@ -93,14 +93,14 @@ function UserInfo({ contract }) {
       // Logic to update balance with the deposit amount
       const updatedBalance = currentUser.balance + amount;
       console.log(`Deposit Amount: ${amount}, New Balance: ${updatedBalance}`);
-      updateUserBalance(currentUser, updatedBalance);
+      dispatch(updateUserBalance(updatedBalance));
     };
 
   const handleWithdraw = (amount) => {
       // Logic to update balance with the withdrawal amount
       const updatedBalance = currentUser.balance - amount;
       console.log(`Withdraw Amount: ${amount}, New Balance: ${updatedBalance}`);
-      updateUserBalance(currentUser, updatedBalance);
+      dispatch(updateUserBalance(updatedBalance));
     };
 
   return (
