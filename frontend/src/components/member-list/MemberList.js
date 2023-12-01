@@ -123,13 +123,17 @@ function MemberList ({contract}) {
             dateJoined="July 15, 2023"
             balance="0"
             pending={true}
+            onVote={(vote) => handleVote("m.username", vote)} // Passing handleVote as a prop
+            voted={votedMembers["m.username"]}
         />
         <MemberItem
             username="Josh Benson"
             friendLendScore="173"
             dateJoined="July 12, 2023"
             balance="7,500"
-            pending={false}
+            pending={true}
+            onVote={(vote) => handleVote("m.username1", vote)} // Passing handleVote as a prop
+            voted={votedMembers["m.username1"]}
         />
         <MemberItem
             username="Joey Laderer"
