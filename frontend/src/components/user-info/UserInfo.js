@@ -5,7 +5,7 @@ import PendingLoan from "./PendingLoan";
 import ActiveLoan from "./ActiveLoan";
 import Balance from "./Balance";
 import { useDispatch, useSelector } from "react-redux";
-import { addLoan, setLoans } from "../../state/actions";
+import { addLoan, setLoans, updateUserBalance } from "../../state/actions";
 
 function UserInfo({ contract }) {
   // state variables
@@ -15,11 +15,18 @@ function UserInfo({ contract }) {
   const [loading, setLoading] = useState(true);
   // const [balance, setBalance] = useState(null); // You would fetch this from your smart contract
 
+//   const [thisUser, setCurrentUser] = useState({
+//     balance: currentUser?.balance ?? 25,
+// });
+
+//   const [balance, setBalance] = useState(13)
   
 
   // TODO: fetch user balance function
-  async function fetchUserBalance() {
+  function fetchUserBalance() {
     console.log("Fetching User Balance")
+    // setBalance(currentUser?.balance)
+    // console.log("current bal" + currentUser)
   }
 
   // fetch data for component
@@ -82,13 +89,31 @@ function UserInfo({ contract }) {
     return <RequestLoan onRequestLoan={onRequestLoan} />;
   };
 
+    const handleDeposit = (amount) => {
+      // Logic to update balance with the deposit amount
+      const updatedBalance = currentUser.balance + amount;
+      console.log(`Deposit Amount: ${amount}, New Balance: ${updatedBalance}`);
+      updateUserBalance(currentUser, updatedBalance);
+    };
+
+  const handleWithdraw = (amount) => {
+      // Logic to update balance with the withdrawal amount
+      const updatedBalance = currentUser.balance - amount;
+      console.log(`Withdraw Amount: ${amount}, New Balance: ${updatedBalance}`);
+      updateUserBalance(currentUser, updatedBalance);
+    };
+
   return (
     <Flex direction="row" align="stretch" wrap="wrap">
       <Box flex="2" minW={{ base: "100%", md: "66%" }} p={3}>
         {renderLoanComponent()}
       </Box>
       <Box flex="1" minW={{ base: "100%", md: "33%" }} p={3}>
-        <Balance /* balance={balance} */ />
+        <Balance  balance={currentUser?.balance} 
+        onDeposit={handleDeposit}
+        onWithdraw={handleWithdraw}
+        />
+        
       </Box>
     </Flex>
   );

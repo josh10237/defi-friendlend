@@ -31,7 +31,7 @@ function App() {
     // setting current user to first member in list; need better solution
     dispatch(setCurrentUser(members[0]))
     // eslint-disable-next-line
-  }, [])
+  }, [members])
   console.log("current user:", currentUser)
 
     return (

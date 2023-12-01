@@ -8,12 +8,21 @@ import {
     FormLabel,
     Stack
   } from "@chakra-ui/react";
-  import React from "react";
+  import {React, useState} from "react";
   
-  function Balance() {
-      // You can manage the state for deposit and withdrawal amounts using useState if needed
-      // const [depositAmount, setDepositAmount] = useState('');
-      // const [withdrawAmount, setWithdrawAmount] = useState('');
+function Balance({ balance, onDeposit, onWithdraw }) {
+    const [depositAmount, setDepositAmount] = useState('');
+    const [withdrawAmount, setWithdrawAmount] = useState('');
+
+    const handleDepositClick = () => {
+        onDeposit(parseFloat(depositAmount));
+        setDepositAmount(''); // Resetting the input field after deposit
+    };
+
+    const handleWithdrawClick = () => {
+        onWithdraw(parseFloat(withdrawAmount));
+        setWithdrawAmount(''); // Resetting the input field after withdrawal
+    };
   
       return (
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} m={4} bgColor="white">
@@ -22,7 +31,7 @@ import {
           </FormLabel>
           <Flex p={4} bg="blue.100" borderRadius="lg" mb={4} justify="space-between" align="center">
             <Text fontSize="2xl" fontWeight="semibold">
-              7,500
+              {balance}
             </Text>
             <Text fontSize="2xl" fontWeight="semibold">
               Dai
@@ -37,19 +46,19 @@ import {
         
             <Flex direction="column" width="full">
               <Stack direction="row" spacing={3} mb={4} width="full" alignItems="flex-end">
-                <FormControl id="depositAmount">
-                  <FormLabel>Deposit Amount</FormLabel>
-                  <Input placeholder="$0.00" />
-                </FormControl>
-                <Button colorScheme="green">Deposit +</Button>
-              </Stack>
-              <Stack direction="row" spacing={3} width="full" alignItems="flex-end">
-                <FormControl id="withdrawAmount">
-                  <FormLabel>Withdraw Amount</FormLabel>
-                  <Input placeholder="$0.00" />
-                </FormControl>
-                <Button colorScheme="red">Withdraw -</Button>
-              </Stack>
+                    <FormControl id="depositAmount">
+                        <FormLabel>Deposit Amount</FormLabel>
+                        <Input placeholder="$0.00" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
+                    </FormControl>
+                    <Button colorScheme="green" onClick={handleDepositClick}>Deposit +</Button>
+                </Stack>
+                <Stack direction="row" spacing={3} width="full" alignItems="flex-end">
+                    <FormControl id="withdrawAmount">
+                        <FormLabel>Withdraw Amount</FormLabel>
+                        <Input placeholder="$0.00" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} />
+                    </FormControl>
+                    <Button colorScheme="red" onClick={handleWithdrawClick}>Withdraw -</Button>
+                </Stack>
             </Flex>
           </Flex>
         </Box>
