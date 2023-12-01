@@ -7,14 +7,29 @@ import { FormLabel,
     Button, 
     Input, 
     InputLeftAddon, 
-    InputGroup 
+    InputGroup, 
+    useStatStyles
 } from "@chakra-ui/react";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-function Loan({loan}) {
+function Loan({ loan , onContribute }) {
 
-    const portionFilled = loan.filled / loan.amount * 100
+    const portionFilled = Math.trunc(loan.filled / loan.amount * 100)
+    const dispatch = useDispatch()
+    const members = useSelector((state) => state.member.members)
+    const [borrower, setBorrower] = useState({})
+    const [contributeAmount, setContributeAmount] = useState(0)
+
+    useEffect(() => {
+        const borrowerFilt = members.filter((m) => parseInt(m.memberAddress, 16) === loan.borrower)
+        if (borrowerFilt.length === 1) {
+            setBorrower(borrowerFilt[0])
+        }
+        // eslint-disable-next-line
+    }, [])
+    console.log(borrower)
     
     // design constants
     const textMargin = '15px'
@@ -48,7 +63,7 @@ function Loan({loan}) {
                 marginRight={textMargin}
             >
                 <Text>Username</Text>
-                <Text>Josh</Text>
+                <Text>{borrower?.username}</Text>
             </Flex>
 
             <Flex justify={'space-between'} 
@@ -56,7 +71,7 @@ function Loan({loan}) {
                 marginRight={textMargin}
             >
                 <Text>FriendLend Score</Text>
-                <Text>760</Text>
+                <Text>{borrower?.friendScore}</Text>
             </Flex>
 
             <Text 
@@ -76,6 +91,14 @@ function Loan({loan}) {
                 marginLeft={textMargin}
                 marginRight={textMargin}
             >
+                <Text>Filled</Text>
+                <Text>${loan.filled}</Text>
+            </Flex>
+
+            <Flex justify={'space-between'} 
+                marginLeft={textMargin}
+                marginRight={textMargin}
+            >
                 <Text>Due Date</Text>
                 <Text>{loan.dueDate}</Text>
             </Flex>
@@ -85,7 +108,7 @@ function Loan({loan}) {
                 marginRight={textMargin}
             >
                 <Text>Interest</Text>
-                <Text>10%</Text>
+                <Text>{loan.interest}</Text>
             </Flex>
 
             <Flex justify={'space-between'} 
@@ -111,9 +134,13 @@ function Loan({loan}) {
                     w={'15vw'}
                 >
                     <InputLeftAddon>$</InputLeftAddon>
-                    <Input placeholder="Enter Amount"></Input>
+                    <Input placeholder="Enter Amount"
+                    onChange={(e) => setContributeAmount(e.target.value)}
+                    ></Input>
                 </InputGroup>
-                <Button mr={'10px'} colorScheme={'green'}>
+                <Button mr={'10px'} colorScheme={'green'}
+                    onClick={() => onContribute(loan, contributeAmount)}
+                >
                     Contribute
                 </Button>
             </Center>

@@ -58,6 +58,7 @@ function UserInfo({ contract }) {
     try {
       contract.methods.requestLoan(amount, interest, new Date(dueDate).getTime(), description).call().then((l) => {
         dispatch(addLoan(l));
+        // dispatch(updateUserLoanPending(l.id));
         console.log("loan request complete:", loanData);
       })
     } catch (e) {
