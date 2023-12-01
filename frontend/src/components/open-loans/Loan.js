@@ -8,7 +8,6 @@ import { FormLabel,
     Input, 
     InputLeftAddon, 
     InputGroup, 
-    useStatStyles
 } from "@chakra-ui/react";
 
 import React, { useEffect, useState } from "react";
@@ -45,7 +44,7 @@ function Loan({ loan , onContribute }) {
         >
             <Center>
                 <FormLabel fontSize="xl" fontWeight="bold" ml={3} mt={3}>
-                    Loan: {loan.borrower}
+                    Loan: {loan.key}
                 </FormLabel>
             </Center>
             <Center>

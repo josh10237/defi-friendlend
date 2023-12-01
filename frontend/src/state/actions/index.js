@@ -39,3 +39,10 @@ export const updateUserBalance = (balance) => {
         payload: balance
     }
 }
+
+export const updateUserLoanStatus = (loanID, loanStatus) => {
+    return {
+        type: "UPDATE_USER_LOAN_STATUS",
+        payload: {loanID: loanID, loanStatus: loanStatus}
+    }
+}

@@ -18,7 +18,13 @@ const memberReducer = (state = initialState, action) => {
         case "SET_CURRENT_USER":
             return {...state, currentUser: action.payload}
         case "UPDATE_USER_BALANCE":
-            return {...state, currentUser: {...state, balance: action.payload}}
+            return {...state, currentUser: {...state.currentUser, balance: action.payload}}
+        case "UPDATE_USER_LOAN_STATUS":
+            return {...state, currentUser: 
+                {...state.currentUser, 
+                    loanStatus: action.payload.loanStatus,
+                    loanid: action.payload.loanID
+                }}
         default:
             return state
     }

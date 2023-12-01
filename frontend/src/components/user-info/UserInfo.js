@@ -5,7 +5,7 @@ import PendingLoan from "./PendingLoan";
 import ActiveLoan from "./ActiveLoan";
 import Balance from "./Balance";
 import { useDispatch, useSelector } from "react-redux";
-import { addLoan, setLoans, updateUserBalance } from "../../state/actions";
+import { addLoan, setLoans, updateUserBalance, updateUserLoanStatus } from "../../state/actions";
 
 function UserInfo({ contract }) {
   // state variables
@@ -58,7 +58,9 @@ function UserInfo({ contract }) {
     try {
       contract.methods.requestLoan(amount, interest, new Date(dueDate).getTime(), description).call().then((l) => {
         dispatch(addLoan(l));
-        // dispatch(updateUserLoanPending(l.id));
+        dispatch(updateUserLoanStatus(l.id, "PENDING"));
+        // change current user's loan status to "PENDING"
+        // put the right loan id on the the loan
         console.log("loan request complete:", loanData);
       })
     } catch (e) {
@@ -69,14 +71,15 @@ function UserInfo({ contract }) {
   console.log("Open Loans Redux Data: ", loanData)
 
   // defines which loan component should be displayed based on fetched data
+  // based on state.member.currentUser.loanStatus
   function renderLoanComponent() {
     if (loading) {
       return <Spinner />;
     };
-    if (loanData) {
-      if (loanData.isPending && !loanData.isFulfilled) {
+    if (currentUser) {
+      if (currentUser.loanStatus === "PENDING") {
         return <PendingLoan />;
-      } else if (loanData.isFulfilled) {
+      } else if (currentUser.loanStatus === "ACTIVE") {
         return (
           <ActiveLoan
             amountDue={loanData.amount}

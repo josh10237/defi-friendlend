@@ -9,10 +9,10 @@ contract FriendLend {
         string myPassword;
         uint256 friendScore;
         uint256 balance;
-        bool isPending;
+        bool isPending; // membership status
         uint256 dateAdded;
         bool exists;
-        uint loanid;
+        uint loanid; // connects to a loan struct
         string loanStatus; // "NONE", "PENDING", "ACTIVE"
     }
 
@@ -38,11 +38,11 @@ contract FriendLend {
         string reason;
     }
 
-    address public owner; //address of group creator
-    mapping(address => Member) public members; //mapping to member structs
-    address[] public allMembers; //array of all member addresses
+    address public owner; // address of group creator
+    mapping(address => Member) public members; // mapping to member structs
+    address[] public allMembers; // array of all member addresses
     string public groupName;
-    mapping(address => mapping(address => int)) public votes; //mapping of candidate addresses to a mapping of the people and their votes for the candidate
+    mapping(address => mapping(address => int)) public votes; // mapping of candidate addresses to a mapping of the people and their votes for the candidate
     uint public memberCount = 0; //number of confirmed members
 
     uint currLoanId = 0;
