@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.5.15;
 pragma experimental ABIEncoderV2;
 
 contract FriendLend {
@@ -210,7 +210,8 @@ contract FriendLend {
         // Logic to withdraw funds from the lending pool
         require(members[msg.sender].balance >= amount, "insufficient balance");
         members[msg.sender].balance -= amount;
-        payable(address(msg.sender)).transfer(amount);
+        address payable addr = msg.sender;
+        addr.transfer(amount);
     }
 
     function cancelLoan(uint256 loanId) public {
