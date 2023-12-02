@@ -5,7 +5,7 @@ import PendingLoan from "./PendingLoan";
 import ActiveLoan from "./ActiveLoan";
 import Balance from "./Balance";
 import { useDispatch, useSelector } from "react-redux";
-import { addLoan, setLoans, updateUserBalance, updateUserLoanStatus } from "../../state/actions";
+import { addLoan, setLoans, deleteLoan, updateUserBalance, updateUserLoanStatus } from "../../state/actions";
 
 function UserInfo({ contract }) {
   // state variables
@@ -13,13 +13,6 @@ function UserInfo({ contract }) {
   const loanData = useSelector((state) => state.loan.loans);
   const currentUser = useSelector((state) => state.member.currentUser)
   const [loading, setLoading] = useState(true);
-  // const [balance, setBalance] = useState(null); // You would fetch this from your smart contract
-
-//   const [thisUser, setCurrentUser] = useState({
-//     balance: currentUser?.balance ?? 25,
-// });
-
-//   const [balance, setBalance] = useState(13)
   
 
   // TODO: fetch user balance function
@@ -58,13 +51,27 @@ function UserInfo({ contract }) {
     try {
       contract.methods.requestLoan(amount, interest, new Date(dueDate).getTime(), description).call().then((l) => {
         dispatch(addLoan(l));
-        dispatch(updateUserLoanStatus(l.id, "PENDING"));
+        dispatch(updateUserLoanStatus(l.id, "PENDING", amount, interest, dueDate, description ));
         // change current user's loan status to "PENDING"
         // put the right loan id on the the loan
         console.log("loan request complete:", loanData);
       })
     } catch (e) {
       console.error("Error requesting loan:", e);
+    }
+  }
+
+  const onCancelLoan = async () => {
+
+    try {
+      // contract.methods.cancelLoan(loanId).call();
+      console.log("called backend")
+      dispatch(deleteLoan(currentUser.loanid));
+      console.log("dispatch(deleteLoan(loanId));")
+      dispatch(updateUserLoanStatus(0, "NONE",));
+      console.log("dispatch(updateUserLoanStatus(0, NONE,));")
+    } catch (e) {
+      console.error("Error canceling loan:", e);
     }
   }
 
@@ -78,7 +85,15 @@ function UserInfo({ contract }) {
     };
     if (currentUser) {
       if (currentUser.loanStatus === "PENDING") {
-        return <PendingLoan />;
+        return <PendingLoan
+            onCancel={onCancelLoan}
+            loanID={currentUser.loanid}
+            amount={currentUser.amount}
+            interest={currentUser.interest}
+            dueDate={currentUser.dueDate}
+            description={currentUser.reason}
+            initialFilled={0}
+         />;
       } else if (currentUser.loanStatus === "ACTIVE") {
         return (
           <ActiveLoan

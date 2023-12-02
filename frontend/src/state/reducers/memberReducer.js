@@ -23,7 +23,11 @@ const memberReducer = (state = initialState, action) => {
             return {...state, currentUser: 
                 {...state.currentUser, 
                     loanStatus: action.payload.loanStatus,
-                    loanid: action.payload.loanID
+                    loanid: action.payload.loanID,
+                    amount: action.payload.amount,
+                    interest: action.payload.interest,
+                    dueDate: action.payload.dueDate,
+                    reason: action.payload.reason
                 }}
         default:
             return state

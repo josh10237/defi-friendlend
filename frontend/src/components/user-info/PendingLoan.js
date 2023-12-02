@@ -1,30 +1,71 @@
-import { Box, Flex, Button, Text } from "@chakra-ui/react";
-import React from "react";
+import { Box, HStack, Flex, Button, Text, CircularProgress, CircularProgressLabel, VStack, Spacer } from "@chakra-ui/react";
+import React, { useState } from "react";
 
-function PendingLoan({ onCancel }) {
+
+function PendingLoan({ onCancel, loanID, amount, interest, dueDate, description, initialFilled }) {
+    const LoanStat = ({ label, value }) => (
+        <Flex justify="space-between" align="center" w="100%">
+            <Text fontWeight="semibold">{label}</Text>
+            <Spacer />
+            <Text>{value}</Text>
+        </Flex>
+    );
+
+    const [filled, setFilled] = useState(initialFilled);
+    const percentFilled = filled / amount * 100;
+
+    const increaseFilledBy25 = () => {
+        const newFilled = filled + 25;
+        console.log("NewFilled: " + newFilled);
+        if (newFilled <= amount) { // Assuming you can't overfill the loan
+            setFilled(newFilled);
+        }
+        console.log("Filled (after): " + filled);
+    };
+    console.log("Pending Loan Incoming Data");
+    console.log("loanID: " + loanID);
+    console.log("Amount: " + amount);
+    console.log("Filled: " + filled);
+    console.log("Percent Filled: " + percentFilled.toFixed(2) + "%"); // toFixed(2) to format the number to two decimal places
+    console.log("Interest: " + interest);
+    console.log("Due Date: " + dueDate);
+    console.log("Description: " + description);
+
     return (
-        <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" p={6} m={6}>
-            <Flex
-                direction="column"
-                align="center"
-                justify="center"
-                textAlign="center"
-            >
-                <Text fontSize="xl" fontWeight="bold" mb={4}>
-                    Pending Loan
+        <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={6} m={6}>
+            <VStack spacing={4}>
+                <Text fontSize="2xl" fontWeight="bold" p={6}>
+                    My Pending Loan ID: {loanID}
                 </Text>
-                <Text fontSize="md" color="gray.500" mb={6}>
-                    Loan Pending...
-                </Text>
-                <Button 
-                    colorScheme="red" 
-                    onClick={onCancel}
-                >
-                    Cancel Request
-                </Button>
-            </Flex>
+                <Flex direction="row" w="100%" justify="space-between">
+                    <VStack align="flex-start" w="33%">
+                        <LoanStat label="Amount" value={`$${amount}`} />
+                        <LoanStat label="Filled" value={`$${filled}`} />
+                        <LoanStat label="Description" value={description} />
+                    </VStack>
+                    <VStack align="center" w="33%">
+                        <CircularProgress value={percentFilled} size="100px" color="blue">
+                            <CircularProgressLabel>{percentFilled}%</CircularProgressLabel>
+                        </CircularProgress>
+                    </VStack>
+                    <VStack align="flex-end" w="33%">
+                        <LoanStat label="Due Date" value={dueDate} />
+                        <LoanStat label="Interest" value={`${interest}%`} />
+                        <LoanStat label="Daily Rate" value="2.5%" />
+                    </VStack>
+                </Flex>
+                <HStack w="100%" justify="space-between" p={2}>
+                    <Button onClick={increaseFilledBy25} size="sm" opacity={0}>
+                        Increase Filled
+                    </Button>
+                    <Spacer />
+                    <Button colorScheme="red" onClick={onCancel} size="sm">
+                        Cancel Request
+                    </Button>
+                </HStack>
+            </VStack>
         </Box>
-    )
+    );
 }
 
-export default PendingLoan
+export default PendingLoan;
