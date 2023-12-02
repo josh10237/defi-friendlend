@@ -17,10 +17,12 @@ export const FriendLend = [
         "type": "string"
       }
     ],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "uint256",
@@ -36,11 +38,12 @@ export const FriendLend = [
         "type": "address"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "address",
@@ -56,11 +59,12 @@ export const FriendLend = [
         "type": "uint256"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "groupName",
     "outputs": [
@@ -70,11 +74,12 @@ export const FriendLend = [
         "type": "string"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "uint256",
@@ -95,11 +100,12 @@ export const FriendLend = [
         "type": "uint256"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "uint256",
@@ -160,11 +166,12 @@ export const FriendLend = [
         "type": "bool"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "memberCount",
     "outputs": [
@@ -174,11 +181,12 @@ export const FriendLend = [
         "type": "uint256"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "address",
@@ -227,13 +235,24 @@ export const FriendLend = [
         "internalType": "bool",
         "name": "exists",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "loanid",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "loanStatus",
+        "type": "string"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -243,11 +262,12 @@ export const FriendLend = [
         "type": "address"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "address",
@@ -268,11 +288,12 @@ export const FriendLend = [
         "type": "int256"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "address",
@@ -282,10 +303,12 @@ export const FriendLend = [
     ],
     "name": "proposeInvite",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "address",
@@ -300,10 +323,12 @@ export const FriendLend = [
     ],
     "name": "voteOnPendingPerson",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "string",
@@ -313,18 +338,21 @@ export const FriendLend = [
     ],
     "name": "join",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [],
     "name": "depositFunds",
     "outputs": [],
+    "payable": true,
     "stateMutability": "payable",
-    "type": "function",
-    "payable": true
+    "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "uint256",
@@ -407,10 +435,12 @@ export const FriendLend = [
         "type": "tuple"
       }
     ],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "uint256",
@@ -425,10 +455,12 @@ export const FriendLend = [
     ],
     "name": "fillLoanRequest",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "uint256",
@@ -438,10 +470,12 @@ export const FriendLend = [
     ],
     "name": "withdrawFunds",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "uint256",
@@ -451,10 +485,12 @@ export const FriendLend = [
     ],
     "name": "cancelLoan",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "uint256",
@@ -464,10 +500,12 @@ export const FriendLend = [
     ],
     "name": "payLoan",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "canJoin",
     "outputs": [
@@ -477,11 +515,12 @@ export const FriendLend = [
         "type": "bool"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "getAllConfirmedMembers",
     "outputs": [
@@ -526,6 +565,16 @@ export const FriendLend = [
             "internalType": "bool",
             "name": "exists",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "loanid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "loanStatus",
+            "type": "string"
           }
         ],
         "internalType": "struct FriendLend.Member[]",
@@ -533,11 +582,12 @@ export const FriendLend = [
         "type": "tuple[]"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "getAllOpenLoans",
     "outputs": [
@@ -599,11 +649,12 @@ export const FriendLend = [
         "type": "tuple[]"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "getPendingMembers",
     "outputs": [
@@ -648,6 +699,16 @@ export const FriendLend = [
             "internalType": "bool",
             "name": "exists",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "loanid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "loanStatus",
+            "type": "string"
           }
         ],
         "internalType": "struct FriendLend.Member[]",
@@ -655,11 +716,12 @@ export const FriendLend = [
         "type": "tuple[]"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "getMembersToVoteOn",
     "outputs": [
@@ -704,6 +766,16 @@ export const FriendLend = [
             "internalType": "bool",
             "name": "exists",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "loanid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "loanStatus",
+            "type": "string"
           }
         ],
         "internalType": "struct FriendLend.Member[]",
@@ -711,11 +783,12 @@ export const FriendLend = [
         "type": "tuple[]"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
+    "constant": true,
     "inputs": [],
     "name": "getPortfolio",
     "outputs": [
@@ -757,8 +830,8 @@ export const FriendLend = [
         "type": "tuple[]"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   }
 ]

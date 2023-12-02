@@ -14,6 +14,14 @@ export const addLoan = (loan) => {
     }
 }
 
+// delete laon
+export const deleteLoan = (loanid) => {
+    return {
+        type: "DELETE_LOAN",
+        payload: loanid
+    }
+}
+
 // gets list of all users
 export const setMembers = (members) => {
     return {
@@ -37,5 +45,12 @@ export const updateUserBalance = (balance) => {
     return {
         type: "UPDATE_USER_BALANCE",
         payload: balance
+    }
+}
+
+export const updateUserLoanStatus = (loanID, loanStatus, amount, interest, dueDate, reason) => {
+    return {
+        type: "UPDATE_USER_LOAN_STATUS",
+        payload: {loanID: loanID, loanStatus: loanStatus, amount: amount, interest: interest, dueDate: dueDate, reason: reason}
     }
 }

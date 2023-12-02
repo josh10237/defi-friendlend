@@ -23,6 +23,13 @@ const loanReducer = (state = initialState, action) => {
                 ...state,
                 loans: [...state.loans, newLoan]
             }
+        
+        case "DELETE_LOAN":
+            const updatedLoans = state.loans.filter(loan => loan.id !== action.payload);
+            return {
+                ...state,
+                loans: updatedLoans
+            };
 
         default:
             return state

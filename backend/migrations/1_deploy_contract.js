@@ -1,6 +1,8 @@
 const FriendLend = artifacts.require("FriendLend.sol")
 
 module.exports = function (deployer, network, accounts) {
+    deployer.deploy(FriendLend, "testGroup", "joey", "joey123");
+    /*
     deployer.deploy(FriendLend, "testGroup", "joey", "joey123",)
     .then(async () => {
         const dylan = "0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef"
@@ -20,4 +22,5 @@ module.exports = function (deployer, network, accounts) {
         
         // assert.equal(await FLInst.memberCount.call(), 2, 'should have 2 members')
     });
+    */
 }

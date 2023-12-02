@@ -1,35 +1,62 @@
 import { Box, FormLabel, Wrap, WrapItem } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import Loan from "./Loan";
 
 // PROPS NEEDED
 // list of open loans
-// 
 
 function OpenLoans() {
-    const openLoans = [
+    const [openLoans, setOpenLoans] = useState([
         {
-            borrower: "LOAN 1",
+            key: 1,
+            borrower: 0x69294144bC1445C0E92a4ad3C572249841091544,
             amount: 2000,
             filled: 1500,
             dueDate: "December 1",
             isFulfilled: false,
+            interest: "10%"
         },
         {
-            borrower: "LOAN 2",
+            key: 2,
+            borrower: 0x69294144bC1445C0E92a4ad3C572249841091544,
             amount: 2500,
             filled: 1200,
             dueDate: "December 2",
             isFulfilled: false,
+            interest: "20%"
         },
         {
-            borrower: "LOAN 3",
+            key: 3,
+            borrower: 0x69294144bC1445C0E92a4ad3C572249841091544,
             amount: 750,
             filled: 150,
             dueDate: "December 3",
             isFulfilled: false,
+            interest: "15%"
         }
-    ]
+    ])
+
+    //TODO handler still needs to interact with backend, frontend only rn
+    const contributeHandler = (loan, contribution) => {
+        console.log("Contributed", contribution, "to loan ", loan.key)
+        const newOpenLoans = openLoans.map((l) => {
+            if (l.key === loan.key) {
+                console.log(typeof(l.filled))
+                console.log(typeof(contribution))
+                const newFilled = l.filled + parseFloat(contribution);
+                console.log(newFilled)
+                console.log(l.amount)
+                if (newFilled < l.amount) {
+                    const newLoan = {...l, filled: newFilled}
+                    return newLoan
+                }
+            }
+            return l;
+        })
+        console.log("NEW OPEN LOANS",newOpenLoans)
+        setOpenLoans(newOpenLoans)
+    }
+
     return (
         <Box
             p={6}
@@ -44,7 +71,7 @@ function OpenLoans() {
                 {openLoans.map((loan) => {
                     return (
                         <WrapItem>
-                            <Loan key={loan.borrower} loan={loan} />
+                            <Loan key={loan.key} loan={loan} onContribute={contributeHandler} />
                         </WrapItem>
                     )
                 })
