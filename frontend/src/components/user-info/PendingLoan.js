@@ -2,7 +2,7 @@ import { Box, HStack, Flex, Button, Text, CircularProgress, CircularProgressLabe
 import React, { useState } from "react";
 
 
-function PendingLoan({ onCancel, loanID, amount, interest, dueDate, description, initialFilled }) {
+function PendingLoan({ onFilled, onCancel, loanID, amount, interest, dueDate, description, initialFilled }) {
     const LoanStat = ({ label, value }) => (
         <Flex justify="space-between" align="center" w="100%">
             <Text fontWeight="semibold">{label}</Text>
@@ -16,8 +16,17 @@ function PendingLoan({ onCancel, loanID, amount, interest, dueDate, description,
 
     const increaseFilledBy25 = () => {
         const newFilled = filled + 25;
-        console.log("NewFilled: " + newFilled);
-        if (newFilled <= amount) { // Assuming you can't overfill the loan
+        console.log("NewFilled: ", newFilled, "Filled: ", filled, "Amount", amount);
+        console.log("Types: ", typeof newFilled, typeof parseFloat(amount));
+        if (newFilled === parseFloat(amount)){
+            console.log("Loan filled 100%");
+            onFilled(); 
+            setFilled(newFilled);
+        }
+        console.log("Between");
+        if (newFilled > parseFloat(amount)) { // Assuming you can't overfill the loan
+            console.log("Over filling loan cancel action");
+        } else {
             setFilled(newFilled);
         }
         console.log("Filled (after): " + filled);

@@ -64,14 +64,43 @@ function UserInfo({ contract }) {
   const onCancelLoan = async () => {
 
     try {
+      // TODO: Fix this backend call (its causing errors idk)
       // contract.methods.cancelLoan(loanId).call();
-      console.log("called backend")
+      // console.log("called backend")
       dispatch(deleteLoan(currentUser.loanid));
       console.log("dispatch(deleteLoan(loanId));")
       dispatch(updateUserLoanStatus(0, "NONE",));
       console.log("dispatch(updateUserLoanStatus(0, NONE,));")
     } catch (e) {
       console.error("Error canceling loan:", e);
+    }
+  }
+
+  const onFillLoan = async () => {
+
+    try {
+      // update status of loan to Active
+      dispatch(updateUserLoanStatus(currentUser.loanid, "ACTIVE", currentUser.amount, currentUser.interest, currentUser.dueDate, currentUser.description ));
+      //give the user balance
+      handleDeposit(currentUser.amount)
+    } catch (e) {
+      console.error("Error filling loan:", e);
+    }
+  }
+
+  const onPayNow = async () => {
+
+    try {
+      // check if they have balance to repay
+      const amount_due = parseFloat(currentUser.amount * (currentUser.interest / 100 + 1))
+      if (currentUser.balance > amount_due){
+        // update status of loan to NONE
+        dispatch(updateUserLoanStatus(currentUser.loanid, "NONE", 0, 0, null, null ));
+        //give the user balance
+        handleWithdraw(amount_due)
+      }
+    } catch (e) {
+      console.error("Error filling loan:", e);
     }
   }
 
@@ -86,6 +115,7 @@ function UserInfo({ contract }) {
     if (currentUser) {
       if (currentUser.loanStatus === "PENDING") {
         return <PendingLoan
+            onFilled={onFillLoan}
             onCancel={onCancelLoan}
             loanID={currentUser.loanid}
             amount={currentUser.amount}
@@ -97,30 +127,38 @@ function UserInfo({ contract }) {
       } else if (currentUser.loanStatus === "ACTIVE") {
         return (
           <ActiveLoan
-            amountDue={loanData.amount}
-            interest={loanData.interest} // Make sure you have an 'interest' field or calculate it
-            dueDate={new Date(loanData.dueDate * 1000).toLocaleDateString()}
-            // Define the onPayNow handler
+              amountDue={`$${parseFloat(currentUser.amount * (currentUser.interest / 100 + 1)).toFixed(2)}`} // Format as a dollar value with 2 decimal places
+              interest={`${currentUser.interest}%`} // Make sure you have an 'interest' field or calculate it
+              dueDate={currentUser.dueDate}
+              onPayNow={onPayNow}
           />
-        );
+      );
       };
     };
     return <RequestLoan onRequestLoan={onRequestLoan} />;
   };
 
-    const handleDeposit = (amount) => {
-      // Logic to update balance with the deposit amount
-      const updatedBalance = currentUser.balance + amount;
-      console.log(`Deposit Amount: ${amount}, New Balance: ${updatedBalance}`);
-      dispatch(updateUserBalance(updatedBalance));
-    };
+  const handleDeposit = (amount) => {
+    // Ensure both values are treated as numbers
+    const numericAmount = parseFloat(amount);
+    const numericBalance = parseFloat(currentUser.balance);
 
-  const handleWithdraw = (amount) => {
-      // Logic to update balance with the withdrawal amount
-      const updatedBalance = currentUser.balance - amount;
-      console.log(`Withdraw Amount: ${amount}, New Balance: ${updatedBalance}`);
-      dispatch(updateUserBalance(updatedBalance));
-    };
+    // Logic to update balance with the deposit amount
+    const updatedBalance = numericBalance + numericAmount;
+    console.log(`Deposit Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
+    dispatch(updateUserBalance(updatedBalance));
+};
+
+const handleWithdraw = (amount) => {
+    // Ensure both values are treated as numbers
+    const numericAmount = parseFloat(amount);
+    const numericBalance = parseFloat(currentUser.balance);
+
+    // Logic to update balance with the withdrawal amount
+    const updatedBalance = numericBalance - numericAmount;
+    console.log(`Withdraw Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
+    dispatch(updateUserBalance(updatedBalance));
+};
 
   return (
     <Flex direction="row" align="stretch" wrap="wrap">
@@ -128,7 +166,8 @@ function UserInfo({ contract }) {
         {renderLoanComponent()}
       </Box>
       <Box flex="1" minW={{ base: "100%", md: "33%" }} p={3}>
-        <Balance  balance={currentUser?.balance} 
+        <Balance  
+        balance={currentUser?.balance}
         onDeposit={handleDeposit}
         onWithdraw={handleWithdraw}
         />
