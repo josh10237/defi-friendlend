@@ -10,17 +10,8 @@ import { addLoan, setLoans, deleteLoan, updateUserBalance, updateUserLoanStatus 
 function UserInfo({ contract }) {
   // state variables
   const dispatch = useDispatch();
-  const loanData = useSelector((state) => state.loan.loans);
   const currentUser = useSelector((state) => state.member.currentUser)
   const [loading, setLoading] = useState(true);
-  
-
-  // TODO: fetch user balance function
-  function fetchUserBalance() {
-    console.log("Fetching User Balance")
-    // setBalance(currentUser?.balance)
-    // console.log("current bal" + currentUser)
-  }
 
   // fetch data for component
   useEffect(() => {
@@ -29,14 +20,12 @@ function UserInfo({ contract }) {
       try {
         const result = await contract.methods.getAllOpenLoans().call();
         dispatch(setLoans(result));
-        console.log("Result after fetching loan data:", loanData);
       } catch (error) {
         console.error("Error fetching loan data:", error);
       }
     }
     setLoading(true);
     fetchLoanData();
-    fetchUserBalance();
     setLoading(false);
     // eslint-disable-next-line
   }, []);
@@ -44,17 +33,10 @@ function UserInfo({ contract }) {
   // function called from child component RequestLoan.js
   // requests a loan by interacting with backend and re-fetches data
   const onRequestLoan = async (amount, interest, dueDate, description) => {
-    console.log(amount)
-    console.log(interest)
-    console.log(dueDate)
-    console.log(description)
     try {
       contract.methods.requestLoan(amount, interest, new Date(dueDate).getTime(), description).call().then((l) => {
         dispatch(addLoan(l));
-        dispatch(updateUserLoanStatus(l.id, "PENDING", amount, interest, dueDate, description ));
-        // change current user's loan status to "PENDING"
-        // put the right loan id on the the loan
-        console.log("loan request complete:", loanData);
+        dispatch(updateUserLoanStatus(l.id, "PENDING"));
       })
     } catch (e) {
       console.error("Error requesting loan:", e);
@@ -66,45 +48,39 @@ function UserInfo({ contract }) {
     try {
       // TODO: Fix this backend call (its causing errors idk)
       // contract.methods.cancelLoan(loanId).call();
-      // console.log("called backend")
       dispatch(deleteLoan(currentUser.loanid));
-      console.log("dispatch(deleteLoan(loanId));")
-      dispatch(updateUserLoanStatus(0, "NONE",));
-      console.log("dispatch(updateUserLoanStatus(0, NONE,));")
+      dispatch(updateUserLoanStatus(0, "NONE"));
     } catch (e) {
       console.error("Error canceling loan:", e);
     }
   }
 
-  const onFillLoan = async () => {
-
+  const onFillLoan = async (loanAmount) => {
     try {
       // update status of loan to Active
-      dispatch(updateUserLoanStatus(currentUser.loanid, "ACTIVE", currentUser.amount, currentUser.interest, currentUser.dueDate, currentUser.description ));
+      dispatch(updateUserLoanStatus(currentUser.loanid, "ACTIVE"));
       //give the user balance
-      handleDeposit(currentUser.amount)
+      handleDeposit(loanAmount)
     } catch (e) {
       console.error("Error filling loan:", e);
     }
   }
 
-  const onPayNow = async () => {
-
+  const onPayNow = async (amount_due) => {
     try {
       // check if they have balance to repay
-      const amount_due = parseFloat(currentUser.amount * (currentUser.interest / 100 + 1))
       if (currentUser.balance > amount_due){
+        const paidLoanID = currentUser.loanid
         // update status of loan to NONE
-        dispatch(updateUserLoanStatus(currentUser.loanid, "NONE", 0, 0, null, null ));
+        dispatch(updateUserLoanStatus(-1, "NONE"));
         //give the user balance
         handleWithdraw(amount_due)
+        dispatch(deleteLoan(paidLoanID))
       }
     } catch (e) {
       console.error("Error filling loan:", e);
     }
   }
-
-  console.log("Open Loans Redux Data: ", loanData)
 
   // defines which loan component should be displayed based on fetched data
   // based on state.member.currentUser.loanStatus
@@ -117,12 +93,6 @@ function UserInfo({ contract }) {
         return <PendingLoan
             onFilled={onFillLoan}
             onCancel={onCancelLoan}
-            loanID={currentUser.loanid}
-            amount={currentUser.amount}
-            interest={currentUser.interest}
-            dueDate={currentUser.dueDate}
-            description={currentUser.reason}
-            initialFilled={0}
          />;
       } else if (currentUser.loanStatus === "ACTIVE") {
         return (

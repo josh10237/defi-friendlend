@@ -11,7 +11,7 @@ import { FriendLend } from './abi/abi';
 // access wallet inside of dapp
 const web3 = new Web3(new Web3.providers.HttpProvider("https://sepolia.infura.io/v3/782dad6b6b984171a70dec97668ad773"))
 // contract address of deployed contract
-const contractAdress = "0xAEAF3d67d695C94c42B5416e096710720b5A1Bf3"
+const contractAdress = "0x7AF84B9b65F5E06B8a3DA649aA2E54DdF14834c2"
 const friendLendContract = new web3.eth.Contract(FriendLend, contractAdress)
 
 function App() {

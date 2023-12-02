@@ -35,7 +35,6 @@ function MemberList ({contract}) {
       const members = await contract.methods.getAllConfirmedMembers().call()
       dispatch(setMembers(members))
       dispatch(setCurrentUser(members[0]))
-      console.log("Members Retrieved:", members)
     } catch (e) {
       console.error("Error retrieving Member List:", e)
     }
