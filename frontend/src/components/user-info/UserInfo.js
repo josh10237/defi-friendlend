@@ -7,7 +7,7 @@ import Balance from "./Balance";
 import { useDispatch, useSelector } from "react-redux";
 import { addLoan, setLoans, deleteLoan, updateUserBalance, updateUserLoanStatus } from "../../state/actions";
 
-function UserInfo({ contract }) {
+function UserInfo({ contract, abi }) {
   // state variables
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.member.currentUser)
@@ -34,13 +34,20 @@ function UserInfo({ contract }) {
   // requests a loan by interacting with backend and re-fetches data
   const onRequestLoan = async (amount, interest, dueDate, description) => {
     try {
-      contract.methods.requestLoan(amount, interest, new Date(dueDate).getTime(), description).call().then((l) => {
+      setLoading(true)
+      abi(
+        "requestLoan", 
+        currentUser.memberAddress, 
+        "beab5fcdce3459b43807e337f3a630f0fa815630a30e951f580f4deeb9c5cdb0", 
+        null, 
+        amount, interest, new Date(dueDate).getTime(), description).then((l) => {
         dispatch(addLoan(l));
         dispatch(updateUserLoanStatus(l.id, "PENDING"));
       })
     } catch (e) {
       console.error("Error requesting loan:", e);
     }
+    setLoading(false)
   }
 
   const onCancelLoan = async () => {
