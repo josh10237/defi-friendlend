@@ -11,12 +11,11 @@ import { FormLabel,
 } from "@chakra-ui/react";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 function Loan({ loan , onContribute }) {
 
     const portionFilled = Math.trunc(loan.filled / loan.amount * 100)
-    const dispatch = useDispatch()
     const members = useSelector((state) => state.member.members)
     const [borrower, setBorrower] = useState({})
     const [contributeAmount, setContributeAmount] = useState(0)
@@ -28,7 +27,6 @@ function Loan({ loan , onContribute }) {
         }
         // eslint-disable-next-line
     }, [])
-    console.log(borrower)
     
     // design constants
     const textMargin = '15px'

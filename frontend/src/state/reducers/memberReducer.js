@@ -6,7 +6,6 @@ const initialState = {
 }
 
 const memberReducer = (state = initialState, action) => {
-    console.log("reducerme")
     switch(action.type) {
         case "SET_MEMBERS":
             const members = action.payload
@@ -23,11 +22,7 @@ const memberReducer = (state = initialState, action) => {
             return {...state, currentUser: 
                 {...state.currentUser, 
                     loanStatus: action.payload.loanStatus,
-                    loanid: action.payload.loanID,
-                    amount: action.payload.amount,
-                    interest: action.payload.interest,
-                    dueDate: action.payload.dueDate,
-                    reason: action.payload.reason
+                    loanid: action.payload.loanID
                 }}
         default:
             return state

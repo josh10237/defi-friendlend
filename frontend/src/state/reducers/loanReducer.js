@@ -30,7 +30,18 @@ const loanReducer = (state = initialState, action) => {
                 ...state,
                 loans: updatedLoans
             };
-
+        case "UPDATE_LOAN_BALANCE":
+            const newLoans = state.loans.map((loan) => {
+                if (loan.id === action.payload.loanID) {
+                    return {...loan, filled: action.payload.newFilled}
+                } else {
+                    return loan
+                }
+            })
+            return {
+                ...state,
+                loans: newLoans
+            }
         default:
             return state
     }

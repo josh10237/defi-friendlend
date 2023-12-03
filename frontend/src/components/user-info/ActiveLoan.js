@@ -1,7 +1,25 @@
 import { Box, Flex, Button, Text, VStack, HStack } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
-function ActiveLoan({ amountDue, interest, dueDate, onPayNow }) {
+function ActiveLoan({ onPayNow }) {
+
+    const loans = useSelector((state) => state.loan.loans)
+    const currentUser = useSelector((state) => state.member.currentUser)
+    const [activeLoan, setActiveLoan] = useState({})
+
+    const handlePayNow = () => {
+        onPayNow(parseFloat(activeLoan?.amount * (activeLoan?.interest / 100 + 1)).toFixed(2))
+    }
+
+    useEffect(() => {
+        const loanFilt = loans.filter((l) => l.id === currentUser.loanid)
+        if (loanFilt.length === 1) {
+            setActiveLoan(loanFilt[0])
+        }
+        //eslint-disable-next-line
+    }, [])
+
     return (
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={8} m={6}>
             <VStack align="stretch" spacing={6}>
@@ -21,7 +39,7 @@ function ActiveLoan({ amountDue, interest, dueDate, onPayNow }) {
                             Amount Due
                         </Text>
                         <Text fontSize="lg" fontWeight="semibold">
-                            {amountDue}
+                            {`$${parseFloat(activeLoan?.amount * (activeLoan?.interest / 100 + 1)).toFixed(2)}`}
                         </Text>
                     </Box>
                     <Box textAlign="center">
@@ -29,7 +47,7 @@ function ActiveLoan({ amountDue, interest, dueDate, onPayNow }) {
                             Interest
                         </Text>
                         <Text fontSize="lg" fontWeight="semibold">
-                            {interest}
+                            {`${activeLoan?.interest}%`}
                         </Text>
                     </Box>
                     <Box textAlign="center">
@@ -37,14 +55,14 @@ function ActiveLoan({ amountDue, interest, dueDate, onPayNow }) {
                             Due Date
                         </Text>
                         <Text fontSize="lg" fontWeight="semibold">
-                            {dueDate}
+                            {activeLoan?.dueDate}
                         </Text>
                     </Box>
                 </HStack>
                 <Flex justify="flex-start" p={4}>
                     <Button 
                         colorScheme="blue" 
-                        onClick={onPayNow}
+                        onClick={handlePayNow}
                     >
                         Pay Now
                     </Button>

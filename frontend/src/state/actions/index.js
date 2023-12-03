@@ -14,7 +14,7 @@ export const addLoan = (loan) => {
     }
 }
 
-// delete laon
+// delete loan
 export const deleteLoan = (loanid) => {
     return {
         type: "DELETE_LOAN",
@@ -38,19 +38,24 @@ export const setCurrentUser = (user) => {
     }
 }
 
-
 // get current user
 export const updateUserBalance = (balance) => {
-    console.log("here123")
     return {
         type: "UPDATE_USER_BALANCE",
         payload: balance
     }
 }
 
-export const updateUserLoanStatus = (loanID, loanStatus, amount, interest, dueDate, reason) => {
+export const updateUserLoanStatus = (loanID, loanStatus) => {
     return {
         type: "UPDATE_USER_LOAN_STATUS",
-        payload: {loanID: loanID, loanStatus: loanStatus, amount: amount, interest: interest, dueDate: dueDate, reason: reason}
+        payload: {loanID: loanID, loanStatus: loanStatus}
+    }
+}
+
+export const updateLoanBalance = (loanID, newFilled) => {
+    return {
+        type: "UPDATE_LOAN_BALANCE",
+        payload: {loanID: loanID, newFilled: newFilled}
     }
 }

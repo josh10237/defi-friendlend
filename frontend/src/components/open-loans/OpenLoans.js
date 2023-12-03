@@ -41,11 +41,7 @@ function OpenLoans() {
         console.log("Contributed", contribution, "to loan ", loan.key)
         const newOpenLoans = openLoans.map((l) => {
             if (l.key === loan.key) {
-                console.log(typeof(l.filled))
-                console.log(typeof(contribution))
                 const newFilled = l.filled + parseFloat(contribution);
-                console.log(newFilled)
-                console.log(l.amount)
                 if (newFilled < l.amount) {
                     const newLoan = {...l, filled: newFilled}
                     return newLoan
@@ -53,7 +49,6 @@ function OpenLoans() {
             }
             return l;
         })
-        console.log("NEW OPEN LOANS",newOpenLoans)
         setOpenLoans(newOpenLoans)
     }
 
