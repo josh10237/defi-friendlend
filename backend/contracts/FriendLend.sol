@@ -45,11 +45,11 @@ contract FriendLend {
     mapping(address => mapping(address => int)) public votes; // mapping of candidate addresses to a mapping of the people and their votes for the candidate
     uint public memberCount = 0; //number of confirmed members
 
-    uint currLoanId = 0;
+    uint public currLoanId = 0;
     Loan[] public loans; //list of all lones
     mapping(uint => mapping(address => uint)) public loanContributions;
     mapping(address => uint256) public bannedMembers;
-
+    mapping(address => uint256) public test;
     constructor(
         string memory theGroupName,
         string memory myUsername,
@@ -132,7 +132,7 @@ contract FriendLend {
             "Member must be pending to join"
         );
         members[msg.sender].username = username;
-        members[msg.sender].isPending = true;
+        members[msg.sender].isPending = false;
         allMembers.push(msg.sender);
         memberCount += 1;
     }
@@ -227,7 +227,7 @@ contract FriendLend {
             if (loanContributions[loanId][allMembers[i]] > 0) {
                 members[allMembers[i]].balance += loanContributions[loanId][
                     allMembers[i]
-                ];
+                ]/2;
             }
         }
         // update member loan status
@@ -252,14 +252,14 @@ contract FriendLend {
         // Logic to pay off an outstanding loan early
 
         members[loans[loanId].borrower].balance -=
-            (1 + loans[loanId].interest) *
-            loans[loanId].amount;
+            (100 + loans[loanId].interest) *
+            loans[loanId].amount/100;
         for (uint i = 0; i < allMembers.length; i++) {
             // repay all people who contribute their contributions + interest
             if (loanContributions[loanId][allMembers[i]] > 0) {
                 members[allMembers[i]].balance +=
-                    (1 + loans[loanId].interest) *
-                    loanContributions[loanId][allMembers[i]];
+                    (100 + loans[loanId].interest) *
+                    loanContributions[loanId][allMembers[i]]/200;
             }
         }
         loans[loanId].isReturned = true;
