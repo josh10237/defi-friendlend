@@ -21,6 +21,7 @@ const abi = async (methodName, sender, PK, value, ...methodArgs) => {
 
   const data = friendLendContract.methods[methodName](...methodArgs).encodeABI();
   console.log("Function ABI Data", data)
+  const nonce = await web3.eth.getTransactionCount(sender)
 
   const tx = {
           from: sender,
@@ -28,6 +29,7 @@ const abi = async (methodName, sender, PK, value, ...methodArgs) => {
           gas: 4000000,
           gasPrice: await web3.eth.getGasPrice(),
           data: data,
+          nonce: nonce
       };
       if (value) {
           tx.value = web3.utils.toWei(value.toString(), 'ether');

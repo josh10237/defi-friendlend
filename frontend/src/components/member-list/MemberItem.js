@@ -1,13 +1,13 @@
 import React from "react";
 import { Grid, Text, Button, Box } from "@chakra-ui/react";
 
-function MemberItem({ username, friendLendScore, dateJoined, balance, pending, onVote, voted }) {
+function MemberItem({ address, username, friendLendScore, dateJoined, balance, pending, onVote, voted }) {
     return (
         <Grid templateColumns="repeat(5, 1fr)" gap={4} alignItems="center" p={4} borderWidth="1px" borderRadius="lg" mb={2}>
-            <Text fontWeight="bold">{username}</Text>
-            <Text>{friendLendScore}</Text>
-            <Text>{dateJoined}</Text>
-            <Text>{balance}</Text>
+            <Text fontWeight="bold">{pending ? address : username}</Text>
+            <Text>{pending ? '' : friendLendScore}</Text>
+            <Text>{pending ? '' : dateJoined}</Text>
+            <Text>{pending ? '' : balance}</Text>
             <Box justifySelf="end">
             {pending && !voted ? ( // Check if the member is pending and not voted
                 <Box>

@@ -15,7 +15,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser, setMembers } from "../../state/actions";
 
-function MemberList ({contract}) {
+function MemberList ({contract, abi}) {
+  const currentUser = useSelector((state) => state.member.currentUser)
   // control state for member proposed by user
   const [proposedMemberAddress, setProposedMemberAddress] = useState("");
   const borderColor = useColorModeValue("gray.200", "gray.600");
@@ -37,11 +38,14 @@ function MemberList ({contract}) {
       const member2 = await contract.methods.members("0x69294144bC1445C0E92a4ad3C572249841091544").call()
       const pendingMembers1 = await contract.methods.getMembersToVoteOn().call();
       const pendingMembers2 = await contract.methods.getPendingMembers().call();
+      for (let m of pendingMembers2) {
+        setVotedMembers(prevState => ({ ...prevState, [m.memberAddress]: true }))
+      }
       const members = [...pendingMembers1, ...pendingMembers2, member1, member2]
       console.log("retrieved members:", members)
       dispatch(setMembers(members))
       console.log("RAW")
-      dispatch(setCurrentUser(members[0]))
+      dispatch(setCurrentUser(member1))
     } catch (e) {
       console.error("Error retrieving Member List:", e)
     }
@@ -58,8 +62,14 @@ function MemberList ({contract}) {
     setRequestLoading(true);
     console.log("Request for address:", proposedMemberAddress);
     try {
-      const result = await contract.methods.proposeInvite(proposedMemberAddress).call()
-      console.log("Result of proposing invite:", result)
+      await abi(
+        "proposeInvite", 
+        currentUser.memberAddress, 
+        "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
+        null, 
+        proposedMemberAddress).then(() => {
+          getMemberList()
+        })
     } catch (e) {
       setRequestLoading(false)
       console.error("Error while proposing invite:", e)
@@ -69,16 +79,22 @@ function MemberList ({contract}) {
     setProposedMemberAddress("");
   };
 
-  const handleVote = async (username, vote) => {
+  const handleVote = async (candidateAddress, vote) => {
       // Logic to handle approve action
-      console.log("handleVote called on user", username);
-      setVotedMembers(prevState => ({ ...prevState, [username]: true }));
+      console.log("handleVote called on user", candidateAddress);
+      setVotedMembers(prevState => ({ ...prevState, [candidateAddress]: true }));
       try {
-        const result = await contract.methods.voteOnPendingPerson(username, vote).call()
-        console.log("Vote sent for", username, ":", vote, "Response:", result);
+        await abi(
+          "voteOnPendingPerson", 
+          currentUser.memberAddress, 
+          "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
+          null, 
+          candidateAddress, vote).then(() => {
+            getMemberList()
+          })
       } catch (e) {
         setRequestLoading(false)
-        console.error("Error sending vote for", username, ":", e);
+        console.error("Error sending vote for", candidateAddress, ":", e);
       }
   };
 
@@ -113,13 +129,14 @@ function MemberList ({contract}) {
           return (
             <MemberItem 
               key={m.memberAddress}
+              address={m.memberAddress}
               username={m.username}
               friendLendScore={m.friendScore}
               dateJoined={m.dateAdded}
               balance={m.balance}
               pending={m.isPending}
-              onVote={(vote) => handleVote(m.username, vote)} // Passing handleVote as a prop
-              voted={votedMembers[m.username]}
+              onVote={(vote) => handleVote(m.memberAddress, vote)} // Passing handleVote as a prop
+              voted={votedMembers[m.memberAddress]}
             />
           )
         })}
