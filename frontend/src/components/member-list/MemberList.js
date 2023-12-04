@@ -32,8 +32,6 @@ function MemberList ({contract}) {
   const getMemberList = async () => {
     // retrieve and log member list
     try {
-      console.log("TRYING")
-      console.log(contract.methods)
       // const members = await contract.methods.getAllConfirmedMembers().call()
       const member1 = await contract.methods.members("0xcaCCC3933801B308F6261B941EA2C68c93730849").call()
       const member2 = await contract.methods.members("0x69294144bC1445C0E92a4ad3C572249841091544").call()

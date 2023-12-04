@@ -26,7 +26,6 @@ function Loan({ loan , onContribute }) {
     // const date = new Date(loan.dueDate);
     // const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(loan.dueDate).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
-
     useEffect(() => {
         const borrowerFilt = members.filter((m) => {
             return (m.memberAddress === loan.borrower)
@@ -35,13 +34,11 @@ function Loan({ loan , onContribute }) {
             setBorrower(borrowerFilt[0])
             setDisableContribute(borrowerFilt[0].memberAddress === currentUser.memberAddress)
         }
-
         // eslint-disable-next-line
-    }, [])
+    }, [members])
     
     // design constants
     const textMargin = '15px'
-
     return (
         <Flex 
             w={'350px'}
