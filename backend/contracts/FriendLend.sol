@@ -242,7 +242,7 @@ contract FriendLend {
         );
         require(
             loans[loanId].borrower == msg.sender,
-            "only the lender can cancel"
+            "only the lender can pay"
         );
         require(loans[loanId].isLent, "loan already not been lent");
         require(
@@ -263,6 +263,8 @@ contract FriendLend {
             }
         }
         loans[loanId].isReturned = true;
+        members[loans[loanId].borrower].loanStatus = "None";
+        members[loans[loanId].borrower].loanid = 0;
     }
 
     function canJoin() public view returns (bool cj) {
@@ -290,7 +292,7 @@ contract FriendLend {
         Member[] memory nonPending = new Member[](memberCount);
         uint j = 0;
         for (uint i = 0; i < allMembers.length; i++) {
-            if (!members[allMembers[i]].isPending) {
+            if (!members[allMembers[i]].isPending && members[allMembers[i]].exists) {
                 nonPending[j] = members[allMembers[i]];
                 j++;
             }

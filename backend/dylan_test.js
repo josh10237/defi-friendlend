@@ -6,7 +6,7 @@ const path = require('path');
 // Connect to the Ethereum node
 const web3 = new Web3(new Web3.providers.HttpProvider("https://sepolia.infura.io/v3/782dad6b6b984171a70dec97668ad773"))
 // contract address of deployed contract
-const contractAddress = "0x3A8e4860be16D75453C87368a43dfD28eE3F23C3"
+const contractAddress = "0x29fb58f34FFce36fB7358b6c238f295628D1D0e6"
 // Read the ABI and address from the compiled contract artifacts
 const contractABI = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'build/contracts/FriendLend.json'), 'utf8'));
 
@@ -24,9 +24,13 @@ async function getInfo() {
   mc = await contract.methods.memberCount().call()
   console.log("memberCount", mc.toString())
   
-  console.log("joey struct", await contract.methods.members(joey_add).call())
-  console.log("dylan struct", await contract.methods.members(dylan_add).call())
-
+  //console.log("joey struct", await contract.methods.members(joey_add).call())
+  //console.log("dylan struct", await contract.methods.members(dylan_add).call())
+  //am = await contract.methods.getAllConfirmedMembers().call()
+  //console.log("all members", am)
+  loanid = await contract.methods.currLoanId().call()
+  ol = await contract.methods.getAllOpenLoans().call()
+  console.log("open loans", ol)
 }
 
 const dylan_PK = '3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3'; // replace with your account's private key
@@ -72,23 +76,26 @@ async function abi(methodName, contractAddress, sender, PK, value, ...methodArgs
 
 async function sendTransactions() {
     try {
-        await abi("depositFunds", contractAddress, dylan_add, dylan_PK, 0.069)
-        console.log("deposit done\n")
+        // await abi("depositFunds", contractAddress, joey_add, joey_PK, 0.039)
+        // console.log("deposit done\n")
         // await abi("proposeInvite", contractAddress, joey_add, joey_PK, null, dylan_add)
         // console.log("proposed invite")
         // await abi("voteOnPendingPerson", contractAddress, joey_add, joey_PK, null, dylan_add, true)
         // console.log("voted on dylan", test)
-        //await abi("join", contractAddress, dylan_add, dylan_PK, null, "dylan")
-        //console.log("dylan joined")
-        abi("requestLoan", contractAddress, dylan_add, dylan_PK, null, 4000000, 3, 5, "i am also broke lol")
-        console.log("requested")
+        await abi("join", contractAddress, dylan_add, dylan_PK, null, "dylan")
+        console.log("dylan joined")
+        await abi("depositFunds", contractAddress, dylan_add, dylan_PK, 0.024)
+        console.log("dylan deposit funds")
+        await abi("requestLoan", contractAddress, joey_add, joey_PK, null, 8000000, 2, 10, "i am broke lol")
+        console.log("joey requested loan")
+        await abi("requestLoan", contractAddress, dylan_add, dylan_PK, null, 4000000, 3, 5, "i am also broke lol")
+        console.log("dyla requested loan")
     }
     catch (error) {//
         console.error('ABORTING LLLLLLLLLL', error);
     }
-    //await abi("depositFunds", contractAddress, my_add, privateKey, 0.0420)
 
 }
 
-//sendTransactions()
-getInfo()
+sendTransactions()
+//getInfo()
