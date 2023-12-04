@@ -18,7 +18,7 @@ function ActiveLoan({ onPayNow }) {
             setActiveLoan(loanFilt[0])
         }
         //eslint-disable-next-line
-    }, [])
+    }, [loans])
 
     return (
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={8} m={6}>

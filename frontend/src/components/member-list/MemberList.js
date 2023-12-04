@@ -44,7 +44,6 @@ function MemberList ({contract, abi}) {
       const members = [...pendingMembers1, ...pendingMembers2, member1, member2]
       console.log("retrieved members:", members)
       dispatch(setMembers(members))
-      console.log("RAW")
       dispatch(setCurrentUser(member1))
     } catch (e) {
       console.error("Error retrieving Member List:", e)
@@ -90,7 +89,8 @@ function MemberList ({contract, abi}) {
           "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
           null, 
           candidateAddress, vote).then(() => {
-            getMemberList()
+            // getMemberList()
+            console.log("vote complete")
           })
       } catch (e) {
         setRequestLoading(false)
@@ -111,8 +111,9 @@ function MemberList ({contract, abi}) {
               value={proposedMemberAddress}
               onChange={(e) => setProposedMemberAddress(e.target.value)}
               flexGrow={1}
+              isDisabled={requestLoading}
             />
-            <Button colorScheme="blue" onClick={handleRequestClick} disabled={requestLoading}>Request</Button>
+            <Button colorScheme="blue" isLoading={requestLoading} onClick={handleRequestClick} >Request</Button>
           </HStack>
         </Flex>
         {/* Column Headers */}

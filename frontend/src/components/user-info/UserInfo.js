@@ -1,13 +1,13 @@
 import { Flex, Box, Spinner, Center, Text } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import RequestLoan from "./RequestLoan";
 import PendingLoan from "./PendingLoan";
 import ActiveLoan from "./ActiveLoan";
 import Balance from "./Balance";
 import { useDispatch, useSelector } from "react-redux";
-import { addLoan, setLoans, deleteLoan, updateUserBalance, updateUserLoanStatus } from "../../state/actions";
+import { setLoans, deleteLoan, updateUserBalance, updateUserLoanStatus } from "../../state/actions";
 
-function UserInfo({ contract, abi }) {
+function UserInfo({ contract, abi, web3 }) {
   // state variables
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.member.currentUser)
@@ -18,7 +18,7 @@ function UserInfo({ contract, abi }) {
   const onRequestLoan = async (amount, interest, dueDate, description) => {
     try {
       console.log("requesting loan", amount, interest, dueDate, description)
-
+      console.log(currentUser)
       setLoading(true)
       await abi(
         "requestLoan", 
@@ -41,8 +41,6 @@ function UserInfo({ contract, abi }) {
   const onCancelLoan = async () => {
     setLoading(true)
     try {
-      // TODO: Fix this backend call (its causing errors idk)
-      // contract.methods.cancelLoan(loanId).call();
       await abi(
         "cancelLoan", 
         currentUser.memberAddress, 
@@ -65,7 +63,14 @@ function UserInfo({ contract, abi }) {
       // update status of loan to Active
       dispatch(updateUserLoanStatus(currentUser.loanid, "ACTIVE"));
       //give the user balance
-      handleDeposit(loanAmount)
+      // Ensure both values are treated as numbers
+      const numericAmount = parseFloat(loanAmount);
+      const numericBalance = parseFloat(currentUser.balance);
+
+      // Logic to update balance amount
+      const updatedBalance = numericBalance + numericAmount;
+      console.log(`Deposit Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
+      dispatch(updateUserBalance(updatedBalance));
     } catch (e) {
       console.error("Error filling loan:", e);
     }
@@ -86,7 +91,13 @@ function UserInfo({ contract, abi }) {
             // update status of loan to NONE
             dispatch(updateUserLoanStatus(-1, "NONE"));
             //give the user balance
-            handleWithdraw(amount_due)
+            const numericAmount = parseFloat(amount_due);
+            const numericBalance = parseFloat(currentUser.balance);
+
+            // Logic to update balance with the withdrawal amount
+            const updatedBalance = numericBalance - numericAmount;
+            console.log(`Withdraw Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
+            dispatch(updateUserBalance(updatedBalance));
             dispatch(deleteLoan(paidLoanID))
           }
         })
@@ -130,26 +141,45 @@ function UserInfo({ contract, abi }) {
     return <RequestLoan onRequestLoan={onRequestLoan} />;
   };
 
-  const handleDeposit = (amount) => {
+  const handleDeposit = async (amount) => {
+    // Ensure both values are treated as numbers
+    const numericAmount = parseFloat(amount) / (10**18);
+    const numericBalance = parseFloat(currentUser.balance);
+
+    await abi(
+      "depositFunds", 
+      currentUser.memberAddress, 
+      "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
+      numericAmount).then(() => {
+        // Logic to update balance with the deposit amount
+        const updatedBalance = numericBalance + numericAmount * (10**18);
+        console.log(`Deposit Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
+        dispatch(updateUserBalance(updatedBalance));
+      })
+  };
+
+const handleWithdraw = async (amount) => {
     // Ensure both values are treated as numbers
     const numericAmount = parseFloat(amount);
     const numericBalance = parseFloat(currentUser.balance);
-
-    // Logic to update balance with the deposit amount
-    const updatedBalance = numericBalance + numericAmount;
-    console.log(`Deposit Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
-    dispatch(updateUserBalance(updatedBalance));
-};
-
-const handleWithdraw = (amount) => {
-    // Ensure both values are treated as numbers
-    const numericAmount = parseFloat(amount);
-    const numericBalance = parseFloat(currentUser.balance);
-
+    try {
+      await abi(
+        "withdrawFunds",
+        currentUser.memberAddress, 
+        "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
+        null,
+        numericAmount).then(() => {
+          const updatedBalance = numericBalance - numericAmount;
+          console.log(`Withdraw Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
+          dispatch(updateUserBalance(updatedBalance));
+        }
+      )
+    } catch (error) {
+      console.log("Error upon withdrawal:", error)
+    }
+    
     // Logic to update balance with the withdrawal amount
-    const updatedBalance = numericBalance - numericAmount;
-    console.log(`Withdraw Amount: ${numericAmount}, New Balance: ${updatedBalance}`);
-    dispatch(updateUserBalance(updatedBalance));
+    
 };
 
   return (

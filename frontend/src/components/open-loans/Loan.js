@@ -21,6 +21,7 @@ function Loan({ loan , onContribute }) {
     const [borrower, setBorrower] = useState({})
     const [contributeAmount, setContributeAmount] = useState(0)
     const [disableContribute, setDisableContribute] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     // convert date to date string
     // const date = new Date(loan.dueDate);
@@ -141,20 +142,22 @@ function Loan({ loan , onContribute }) {
                     <InputLeftAddon>$</InputLeftAddon>
                     <Input placeholder="Enter Amount"
                     onChange={(e) => setContributeAmount(e.target.value)}
+                    isDisabled={loading}
                     ></Input>
                 </InputGroup>
                 <Button mr={'10px'} colorScheme={'green'}
-                    onClick={() => onContribute(loan, contributeAmount)}
+                    onClick={async () => {
+                        setLoading(true)
+                        await onContribute(loan, contributeAmount)
+                        setContributeAmount('')
+                        setLoading(false)
+                    }}
                     isDisabled={disableContribute}
+                    isLoading={loading}
                 >
                     Contribute
                 </Button>
             </Center>
-            
-            
-            
-
-
         </Flex>
     )
 }

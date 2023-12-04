@@ -20,12 +20,11 @@ function OpenLoans({contract, abi}) {
             try {
                 const loans = [];
                 const badLoans = await contract.methods.getAllOpenLoans().call();
-
                 const numLoans = badLoans.length
-                console.log(numLoans)
                 for (let i = 0; i < numLoans; i += 1) {
                     const l = await contract.methods.loans(i).call();
-                    if (l.exists) {
+                    console.log(l)
+                    if (l.exists && !l.isReturned) {
                         loans.push(l)
                     }
                 }
@@ -41,36 +40,6 @@ function OpenLoans({contract, abi}) {
         // eslint-disable-next-line
     }, []);
 
-    //DUMMY DATA, REMOVE LATER
-    const [gapopenLoans, setOpenLoans] = useState([
-        {
-            key: 1,
-            borrower: 0x69294144bC1445C0E92a4ad3C572249841091544,
-            amount: 2000,
-            filled: 1500,
-            dueDate: "December 1",
-            isFulfilled: false,
-            interest: "10%"
-        },
-        {
-            key: 2,
-            borrower: 0x69294144bC1445C0E92a4ad3C572249841091544,
-            amount: 2500,
-            filled: 1200,
-            dueDate: "December 2",
-            isFulfilled: false,
-            interest: "20%"
-        },
-        {
-            key: 3,
-            borrower: 0x69294144bC1445C0E92a4ad3C572249841091544,
-            amount: 750,
-            filled: 150,
-            dueDate: "December 3",
-            isFulfilled: false,
-            interest: "15%"
-        }
-    ])
     //TODO handler still needs to interact with backend, frontend only rn
     const contributeHandler = async (loan, contribution) => {
         console.log("Contributing", contribution, "to loan ", loan.id)
