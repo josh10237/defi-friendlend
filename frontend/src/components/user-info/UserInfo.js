@@ -1,4 +1,4 @@
-import { Flex, Box, Spinner } from "@chakra-ui/react";
+import { Flex, Box, Spinner, Center, Text } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import RequestLoan from "./RequestLoan";
 import PendingLoan from "./PendingLoan";
@@ -11,38 +11,26 @@ function UserInfo({ contract, abi }) {
   // state variables
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.member.currentUser)
-  const [loading, setLoading] = useState(true);
-
-  // fetch data for component
-  useEffect(() => {
-    // function to fetch loan data from backend on load
-    async function fetchLoanData() {
-      try {
-        const result = await contract.methods.getAllOpenLoans().call();
-        dispatch(setLoans(result));
-      } catch (error) {
-        console.error("Error fetching loan data:", error);
-      }
-    }
-    setLoading(true);
-    fetchLoanData();
-    setLoading(false);
-    // eslint-disable-next-line
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   // function called from child component RequestLoan.js
   // requests a loan by interacting with backend and re-fetches data
   const onRequestLoan = async (amount, interest, dueDate, description) => {
     try {
+      console.log("requesting loan", amount, interest, dueDate, description)
+
       setLoading(true)
-      abi(
+      await abi(
         "requestLoan", 
         currentUser.memberAddress, 
-        "beab5fcdce3459b43807e337f3a630f0fa815630a30e951f580f4deeb9c5cdb0", 
+        "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
         null, 
-        amount, interest, new Date(dueDate).getTime(), description).then((l) => {
-        dispatch(addLoan(l));
-        dispatch(updateUserLoanStatus(l.id, "PENDING"));
+        amount, interest, new Date(dueDate).getTime(), description).then(async (l) => {
+        console.log("dispatching to redux")
+        const loans = await contract.methods.getAllOpenLoans().call()
+        const memberBE = await contract.methods.members(currentUser.memberAddress).call()
+        dispatch(setLoans(loans));
+        dispatch(updateUserLoanStatus(memberBE.loanid, "PENDING"));
       })
     } catch (e) {
       console.error("Error requesting loan:", e);
@@ -51,15 +39,25 @@ function UserInfo({ contract, abi }) {
   }
 
   const onCancelLoan = async () => {
-
+    setLoading(true)
     try {
       // TODO: Fix this backend call (its causing errors idk)
       // contract.methods.cancelLoan(loanId).call();
-      dispatch(deleteLoan(currentUser.loanid));
-      dispatch(updateUserLoanStatus(0, "NONE"));
+      await abi(
+        "cancelLoan", 
+        currentUser.memberAddress, 
+        "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
+        null, 
+        currentUser.loanid).then(() => {
+          dispatch(deleteLoan(currentUser.loanid));
+          dispatch(updateUserLoanStatus(0, "NONE"));
+          console.log("loan cancelled")
+        })
     } catch (e) {
       console.error("Error canceling loan:", e);
     }
+    setLoading(false)
+
   }
 
   const onFillLoan = async (loanAmount) => {
@@ -74,32 +72,49 @@ function UserInfo({ contract, abi }) {
   }
 
   const onPayNow = async (amount_due) => {
+    setLoading(true)
     try {
-      // check if they have balance to repay
-      if (currentUser.balance > amount_due){
-        const paidLoanID = currentUser.loanid
-        // update status of loan to NONE
-        dispatch(updateUserLoanStatus(-1, "NONE"));
-        //give the user balance
-        handleWithdraw(amount_due)
-        dispatch(deleteLoan(paidLoanID))
-      }
+      await abi(
+        "payLoan", 
+        currentUser.memberAddress, 
+        "3b5c8eb5d0d5b2e3f86805aa2a4e3f2a4d939e88791c238984237263a7ebe3d3", 
+        null, 
+        currentUser.loanid).then(() => {
+          // check if they have balance to repay
+          if (currentUser.balance > amount_due){
+            const paidLoanID = currentUser.loanid
+            // update status of loan to NONE
+            dispatch(updateUserLoanStatus(-1, "NONE"));
+            //give the user balance
+            handleWithdraw(amount_due)
+            dispatch(deleteLoan(paidLoanID))
+          }
+        })
     } catch (e) {
       console.error("Error filling loan:", e);
     }
+    setLoading(false)
   }
 
   // defines which loan component should be displayed based on fetched data
   // based on state.member.currentUser.loanStatus
   function renderLoanComponent() {
     if (loading) {
-      return <Spinner />;
+      return (
+        <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={6} m={6}>
+          <Center flexDirection={'column'}>
+            <Spinner size={'xl'} m={'50px'} />
+            <Text>Processing your Request...</Text>
+          </Center>
+        </Box>
+      );
     };
     if (currentUser) {
       if (currentUser.loanStatus === "PENDING") {
         return <PendingLoan
             onFilled={onFillLoan}
             onCancel={onCancelLoan}
+            abi={abi}
          />;
       } else if (currentUser.loanStatus === "ACTIVE") {
         return (

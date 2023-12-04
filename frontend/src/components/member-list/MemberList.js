@@ -32,8 +32,17 @@ function MemberList ({contract}) {
   const getMemberList = async () => {
     // retrieve and log member list
     try {
-      const members = await contract.methods.getAllConfirmedMembers().call()
+      console.log("TRYING")
+      console.log(contract.methods)
+      // const members = await contract.methods.getAllConfirmedMembers().call()
+      const member1 = await contract.methods.members("0xcaCCC3933801B308F6261B941EA2C68c93730849").call()
+      const member2 = await contract.methods.members("0x69294144bC1445C0E92a4ad3C572249841091544").call()
+      const pendingMembers1 = await contract.methods.getMembersToVoteOn().call();
+      const pendingMembers2 = await contract.methods.getPendingMembers().call();
+      const members = [...pendingMembers1, ...pendingMembers2, member1, member2]
+      console.log("retrieved members:", members)
       dispatch(setMembers(members))
+      console.log("RAW")
       dispatch(setCurrentUser(members[0]))
     } catch (e) {
       console.error("Error retrieving Member List:", e)
@@ -105,52 +114,18 @@ function MemberList ({contract}) {
         {members.map((m) => {
           return (
             <MemberItem 
-              key={m.username}
+              key={m.memberAddress}
               username={m.username}
-              friendLendScore={m.memberAddress}
-              dateJoined={m.myPassword}
+              friendLendScore={m.friendScore}
+              dateJoined={m.dateAdded}
               balance={m.balance}
-              pending={true}
+              pending={m.isPending}
               onVote={(vote) => handleVote(m.username, vote)} // Passing handleVote as a prop
               voted={votedMembers[m.username]}
             />
           )
         })}
-        {/* Filler Member Data, temporary! */}
-        <MemberItem
-            username="0x03592358689"
-            friendLendScore="0"
-            dateJoined="July 15, 2023"
-            balance="0"
-            pending={true}
-            onVote={(vote) => handleVote("m.username", vote)} // Passing handleVote as a prop
-            voted={votedMembers["m.username"]}
-        />
-        <MemberItem
-            username="Josh Benson"
-            friendLendScore="173"
-            dateJoined="July 12, 2023"
-            balance="7,500"
-            pending={true}
-            onVote={(vote) => handleVote("m.username1", vote)} // Passing handleVote as a prop
-            voted={votedMembers["m.username1"]}
-        />
-        <MemberItem
-            username="Joey Laderer"
-            friendLendScore="173"
-            dateJoined="July 12, 2023"
-            balance="97,500"
-            pending={false}
-        />
-        <MemberItem
-            username="Dylan Goetting"
-            friendLendScore="173"
-            dateJoined="July 12, 2023"
-            balance="7,000"
-            pending={false}
-        />
         
-        {/* ... other members */}
       </Flex>
     </Box>
   );

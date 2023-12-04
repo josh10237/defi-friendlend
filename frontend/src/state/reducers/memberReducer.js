@@ -19,10 +19,11 @@ const memberReducer = (state = initialState, action) => {
         case "UPDATE_USER_BALANCE":
             return {...state, currentUser: {...state.currentUser, balance: action.payload}}
         case "UPDATE_USER_LOAN_STATUS":
+            const fixedPayload = fixBigIntTypes(action.payload)
             return {...state, currentUser: 
                 {...state.currentUser, 
-                    loanStatus: action.payload.loanStatus,
-                    loanid: action.payload.loanID
+                    loanStatus: fixedPayload.loanStatus,
+                    loanid: fixedPayload.loanID
                 }}
         default:
             return state

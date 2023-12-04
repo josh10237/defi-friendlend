@@ -11,7 +11,7 @@ import { FriendLend } from './abi/abi';
 // access wallet inside of dapp
 const web3 = new Web3(new Web3.providers.HttpProvider("https://sepolia.infura.io/v3/782dad6b6b984171a70dec97668ad773"))
 // contract address of deployed contract
-const contractAddress = "0x7AF84B9b65F5E06B8a3DA649aA2E54DdF14834c2"
+const contractAddress = "0x3A8e4860be16D75453C87368a43dfD28eE3F23C3"
 const friendLendContract = new web3.eth.Contract(FriendLend, contractAddress)
 
 // script for all abi calls
@@ -25,7 +25,7 @@ const abi = async (methodName, sender, PK, value, ...methodArgs) => {
   const tx = {
           from: sender,
           to: contractAddress,
-          gas: 200000000,
+          gas: 4000000,
           gasPrice: await web3.eth.getGasPrice(),
           data: data,
       };

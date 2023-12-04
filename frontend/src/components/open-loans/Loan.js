@@ -17,14 +17,25 @@ function Loan({ loan , onContribute }) {
 
     const portionFilled = Math.trunc(loan.filled / loan.amount * 100)
     const members = useSelector((state) => state.member.members)
+    const currentUser = useSelector((state) => state.member.currentUser)
     const [borrower, setBorrower] = useState({})
     const [contributeAmount, setContributeAmount] = useState(0)
+    const [disableContribute, setDisableContribute] = useState(false)
+
+    // convert date to date string
+    // const date = new Date(loan.dueDate);
+    // const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date(loan.dueDate).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
 
     useEffect(() => {
-        const borrowerFilt = members.filter((m) => parseInt(m.memberAddress, 16) === loan.borrower)
+        const borrowerFilt = members.filter((m) => {
+            return (m.memberAddress === loan.borrower)
+        })
         if (borrowerFilt.length === 1) {
             setBorrower(borrowerFilt[0])
+            setDisableContribute(borrowerFilt[0].memberAddress === currentUser.memberAddress)
         }
+
         // eslint-disable-next-line
     }, [])
     
@@ -42,7 +53,7 @@ function Loan({ loan , onContribute }) {
         >
             <Center>
                 <FormLabel fontSize="xl" fontWeight="bold" ml={3} mt={3}>
-                    Loan: {loan.key}
+                    Loan: {loan.id}
                 </FormLabel>
             </Center>
             <Center>
@@ -97,7 +108,7 @@ function Loan({ loan , onContribute }) {
                 marginRight={textMargin}
             >
                 <Text>Due Date</Text>
-                <Text>{loan.dueDate}</Text>
+                <Text>{formattedDate}</Text>
             </Flex>
 
             <Flex justify={'space-between'} 
@@ -105,7 +116,7 @@ function Loan({ loan , onContribute }) {
                 marginRight={textMargin}
             >
                 <Text>Interest</Text>
-                <Text>{loan.interest}</Text>
+                <Text>{loan.interest}%</Text>
             </Flex>
 
             <Flex justify={'space-between'} 
@@ -137,6 +148,7 @@ function Loan({ loan , onContribute }) {
                 </InputGroup>
                 <Button mr={'10px'} colorScheme={'green'}
                     onClick={() => onContribute(loan, contributeAmount)}
+                    isDisabled={disableContribute}
                 >
                     Contribute
                 </Button>

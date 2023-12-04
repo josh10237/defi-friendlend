@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateLoanBalance } from "../../state/actions"
 
 
-function PendingLoan({ onFilled, onCancel }) {
+function PendingLoan({ onFilled, onCancel, abi }) {
     const loans = useSelector((state) => state.loan.loans)
     const currentUser = useSelector((state) => state.member.currentUser)
     const dispatch = useDispatch()
@@ -28,11 +28,24 @@ function PendingLoan({ onFilled, onCancel }) {
 
     const percentFilled = pendingLoan?.filled / pendingLoan?.amount * 100;
 
-    const increaseFilledBy25 = () => {
-        if (pendingLoan.filled + 1 < pendingLoan.amount) {
-            dispatch(updateLoanBalance(pendingLoan.id, pendingLoan.filled + 1))
-        } else {
-            onFilled(pendingLoan.amount)
+    const increaseFilledByHalf = async () => {
+        const contribution = pendingLoan.amount / 2
+        try {
+            await abi(
+                "fillLoanRequest", 
+                // filling from other user address and pk
+                "0x69294144bC1445C0E92a4ad3C572249841091544", 
+                "beab5fcdce3459b43807e337f3a630f0fa815630a30e951f580f4deeb9c5cdb0", 
+                null, 
+                currentUser.loanid, contribution).then(() => {
+                    if (pendingLoan.filled + contribution < pendingLoan.amount) {
+                        dispatch(updateLoanBalance(pendingLoan.id, pendingLoan.filled + contribution))
+                    } else {
+                        onFilled(pendingLoan.amount)
+                    }
+                })
+        } catch (e) {
+            console.log("Error upon filling loan request: ", e)
         }
     };
 
@@ -60,7 +73,7 @@ function PendingLoan({ onFilled, onCancel }) {
                     </VStack>
                 </Flex>
                 <HStack w="100%" justify="space-between" p={2}>
-                    <Button onClick={increaseFilledBy25} size="sm" opacity={0}>
+                    <Button onClick={increaseFilledByHalf} size="sm" opacity={0}>
                         Increase Filled
                     </Button>
                     <Spacer />

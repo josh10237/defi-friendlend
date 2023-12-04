@@ -30,10 +30,10 @@ function Balance({ balance, onDeposit, onWithdraw }) {
               Balance
           </FormLabel>
           <Flex p={4} bg="blue.100" borderRadius="lg" mb={4} justify="space-between" align="center">
-            <Text fontSize="2xl" fontWeight="semibold">
-            {`$${parseFloat(balance).toFixed(2)}`}
+            <Text fontSize="xl" fontWeight="semibold">
+            {`$${parseFloat(balance)}`}
             </Text>
-            <Text fontSize="2xl" fontWeight="semibold">
+            <Text fontSize="xl" fontWeight="semibold">
               Dai
             </Text>
           </Flex>

@@ -6,6 +6,7 @@ function RequestLoan({ onRequestLoan }) {
     const [interest, setInterest] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [description, setDescription] = useState(""); // State to handle the description
+    const [loading, setLoading] = useState(false)
 
     return (
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={6} m={6}>
@@ -31,7 +32,7 @@ function RequestLoan({ onRequestLoan }) {
                     <FormLabel>Reason</FormLabel>
                     <Input placeholder="Describe the reason for the loan" onChange={(e) => setDescription(e.target.value)} />
                 </FormControl>
-                <Button colorScheme="blue" onClick={() => onRequestLoan(amount, interest, dueDate, description)}>
+                <Button colorScheme="blue" onClick={async () => await onRequestLoan(amount, interest, dueDate, description)}>
                     Request
                 </Button>
             </Flex>
